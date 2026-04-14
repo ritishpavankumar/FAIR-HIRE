@@ -1,2084 +1,568 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FairHire - Smart Talent Matching</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    :root {
-      --primary: #2563EB;
-      --primary-dark: #1D4ED8;
-      --primary-light: #3B82F6;
-      --accent: #06B6D4;
-      --accent-light: #22D3EE;
-      --success: #10B981;
-      --success-light: #34D399;
-      --warning: #F59E0B;
-      --warning-light: #FBBF24;
-      --danger: #EF4444;
-      --bg-main: #F8FAFC;
-      --bg-gradient: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 50%, #DBEAFE 100%);
-      --surface: #FFFFFF;
-      --surface-elevated: #FFFFFF;
-      --text-primary: #1E293B;
-      --text-secondary: #64748B;
-      --text-muted: #94A3B8;
-      --border: #E2E8F0;
-      --border-light: #F1F5F9;
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -4px rgba(0, 0, 0, 0.04);
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --radius-xl: 24px;
-      --font-display: 'Plus Jakarta Sans', sans-serif;
-      --font-body: 'Inter', sans-serif;
-    }
-    
-    html { font-size: 15px; }
-    
-    body {
-      font-family: var(--font-body);
-      background: var(--bg-main);
-      color: var(--text-primary);
-      min-height: 100vh;
-      line-height: 1.6;
-    }
-    
-    h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); font-weight: 700; line-height: 1.2; }
-    
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
-    
-    /* Navbar */
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 64px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-light);
-      z-index: 100;
-      display: flex;
-      align-items: center;
-    }
-    
-    .navbar .container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-    }
-    
-    .logo {
-      font-family: var(--font-display);
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .logo-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: 700;
-      color: white;
-    }
-    
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .nav-link {
-      padding: 10px 18px;
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .nav-link:hover { color: var(--text-primary); background: var(--border-light); }
-    
-    .nav-link.active {
-      background: var(--primary);
-      color: white;
-    }
-    
-    .nav-cta {
-      display: flex;
-      gap: 8px;
-    }
-    
-    .nav-btn {
-      padding: 10px 20px;
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 500;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .nav-btn:hover { color: var(--text-primary); background: var(--border-light); }
-    
-    .nav-btn.active {
-      background: var(--primary);
-      color: white;
-    }
-    
-    /* Hero Section */
-    .hero {
-      padding: 120px 0 60px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(ellipse at center, rgba(37, 99, 235, 0.08) 0%, transparent 60%);
-      pointer-events: none;
-    }
-    
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: 24px;
-      box-shadow: var(--shadow-sm);
-    }
-    
-    .hero-badge-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--success);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    
-    .hero-title {
-      font-size: 3.5rem;
-      font-weight: 800;
-      color: var(--text-primary);
-      margin-bottom: 16px;
-      letter-spacing: -0.02em;
-    }
-    
-    .hero-title-accent {
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .hero-subtitle {
-      font-size: 1.25rem;
-      color: var(--text-secondary);
-      max-width: 600px;
-      margin: 0 auto 40px;
-      line-height: 1.7;
-    }
-    
-    .hero-cta {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    
-    .btn {
-      padding: 14px 28px;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-family: var(--font-display);
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-    }
-    
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
-    }
-    
-    .btn-secondary {
-      background: white;
-      color: var(--text-primary);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-    }
-    
-    .btn-secondary:hover {
-      background: var(--border-light);
-      transform: translateY(-2px);
-    }
-    
-    /* Section Toggle */
-    .section-tabs {
-      display: flex;
-      background: white;
-      border-radius: var(--radius-md);
-      padding: 6px;
-      margin-bottom: 32px;
-      box-shadow: var(--shadow-md);
-      width: fit-content;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    
-    .section-tab {
-      padding: 12px 28px;
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .section-tab.active {
-      background: var(--primary);
-      color: white;
-      box-shadow: var(--shadow-sm);
-    }
-    
-    /* Main Content Area */
-    .main-content {
-      padding-bottom: 80px;
-    }
-    
-    .content-header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    
-    .content-title {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 8px;
-    }
-    
-    .content-subtitle {
-      color: var(--text-secondary);
-    }
-    
-    /* Cards */
-    .card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.25s ease;
-    }
-    
-    .card:hover {
-      box-shadow: var(--shadow-lg);
-    }
-    
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-    
-    .card-title {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .card-icon {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .card-icon svg { width: 18px; height: 18px; stroke: white; fill: none; }
-    
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-    
-    .stat-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      text-align: center;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.25s ease;
-    }
-    
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-    }
-    
-    .stat-value {
-      font-family: var(--font-display);
-      font-size: 2.5rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
-    }
-    
-    .stat-label {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 8px;
-      font-weight: 500;
-    }
-    
-    /* Form Elements */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-    
-    .form-group { margin-bottom: 0; }
-    
-    .form-group.full { grid-column: 1 / -1; }
-    
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-    }
-    
-    input, textarea, select {
-      width: 100%;
-      height: 48px;
-      padding: 0 16px;
-      background: var(--bg-main);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      font-size: 14px;
-      transition: all 0.2s ease;
-    }
-    
-    input::placeholder, textarea::placeholder { color: var(--text-muted); }
-    
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      border-color: var(--primary);
-      background: white;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-    
-    textarea {
-      height: 100px;
-      padding: 12px 16px;
-      resize: vertical;
-    }
-    
-    select {
-      cursor: pointer;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 16px center;
-    }
-    
-    .btn-group {
-      display: flex;
-      gap: 12px;
-      margin-top: 28px;
-    }
-    
-    /* Tags */
-    .tags-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 12px;
-      background: var(--bg-main);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      min-height: 48px;
-    }
-    
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-    
-    .tag-remove {
-      width: 16px;
-      height: 16px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      line-height: 1;
-    }
-    
-    .tag-remove:hover { color: var(--danger); }
-    
-    .tag-input {
-      flex: 1;
-      min-width: 140px;
-      height: 30px;
-      padding: 0 8px;
-      background: transparent;
-      border: none;
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      font-size: 14px;
-    }
-    
-    .tag-input:focus { outline: none; }
-    
-    .skill-suggestions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    
-    .skill-suggestion {
-      padding: 5px 12px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .skill-suggestion:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      background: rgba(37, 99, 235, 0.05);
-    }
-    
-    /* Fit Score Badge */
-    .fit-score {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 60px;
-      height: 32px;
-      padding: 0 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      color: white;
-    }
-    
-    .fit-score.high { background: linear-gradient(135deg, var(--success), var(--success-light)); }
-    .fit-score.medium { background: linear-gradient(135deg, var(--warning), var(--warning-light)); }
-    .fit-score.low { background: linear-gradient(135deg, #94A3B8, #CBD5E1); }
-    
-    /* Candidate/Job Card */
-    .result-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      transition: all 0.25s ease;
-    }
-    
-    .result-card:hover {
-      border-color: var(--primary);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
-    }
-    
-    .result-rank {
-      width: 44px;
-      height: 44px;
-      background: var(--bg-main);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--text-secondary);
-      flex-shrink: 0;
-    }
-    
-    .result-rank.gold { background: linear-gradient(135deg, #F59E0B, #FBBF24); color: white; }
-    .result-rank.silver { background: linear-gradient(135deg, #9CA3AF, #E5E7EB); color: white; }
-    .result-rank.bronze { background: linear-gradient(135deg, #CD7F32, #DA8A67); color: white; }
-    
-    .result-info { flex: 1; min-width: 0; }
-    
-    .result-name {
-      font-family: var(--font-display);
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-    
-    .result-meta {
-      font-size: 13px;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    
-    .result-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .result-meta-item svg { width: 14px; height: 14px; stroke: var(--text-muted); fill: none; }
-    
-    .result-skills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 10px;
-    }
-    
-    .result-skill {
-      padding: 4px 10px;
-      background: var(--bg-main);
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-    
-    .result-score { text-align: right; flex-shrink: 0; }
-    
-    .score-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 6px;
-    }
-    
-    /* Profile Summary */
-    .profile-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 24px;
-      margin-bottom: 32px;
-      padding-bottom: 32px;
-      border-bottom: 1px solid var(--border);
-    }
-    
-    .profile-avatar {
-      width: 96px;
-      height: 96px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-display);
-      font-size: 32px;
-      font-weight: 800;
-      color: white;
-      flex-shrink: 0;
-    }
-    
-    .profile-details { flex: 1; }
-    
-    .profile-name {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-    
-    .profile-email {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-bottom: 16px;
-    }
-    
-    .profile-stats {
-      display: flex;
-      gap: 24px;
-    }
-    
-    .profile-stat {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .profile-stat svg { width: 16px; height: 16px; stroke: var(--text-muted); fill: none; }
-    
-    .profile-stat-value { font-weight: 600; color: var(--text-primary); }
-    .profile-stat-label { font-size: 13px; color: var(--text-muted); }
-    
-    .profile-section {
-      margin-bottom: 24px;
-    }
-    
-    .profile-section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-    
-    .profile-section-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-primary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    
-    .profile-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-    }
-    
-    .profile-item {
-      background: var(--bg-main);
-      padding: 16px;
-      border-radius: var(--radius-sm);
-    }
-    
-    .profile-item-title {
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-    
-    .profile-item-subtitle {
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-    
-    /* Job Card */
-    .job-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      margin-bottom: 16px;
-      transition: all 0.25s ease;
-    }
-    
-    .job-card:hover {
-      box-shadow: var(--shadow-md);
-    }
-    
-    .job-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-    
-    .job-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-    
-    .job-company {
-      font-size: 14px;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-    
-    .job-meta {
-      display: flex;
-      gap: 20px;
-      margin-bottom: 16px;
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-    
-    .job-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .job-meta-item svg { width: 14px; height: 14px; stroke: var(--text-muted); fill: none; }
-    
-    .job-description {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.7;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-    }
-    
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-    }
-    
-    .empty-icon {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-    }
-    
-    .empty-icon svg { width: 36px; height: 36px; stroke: white; fill: none; }
-    
-    .empty-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 8px;
-    }
-    
-    .empty-subtitle {
-      color: var(--text-secondary);
-      margin-bottom: 24px;
-    }
-    
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 4px;
-      background: white;
-      border-radius: var(--radius-md);
-      padding: 6px;
-      margin-bottom: 24px;
-      box-shadow: var(--shadow-sm);
-    }
-    
-    .tab {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .tab.active {
-      background: var(--bg-main);
-      color: var(--text-primary);
-    }
-    
-    .tab:not(.active):hover { color: var(--text-primary); }
-    
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .fade-in { animation: fadeIn 0.3s ease; }
-    
-    /* Grid Layout */
-    .two-col-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-    
-    /* Filter Select */
-    .filter-select {
-      padding: 12px 16px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-size: 14px;
-      color: var(--text-primary);
-      margin-bottom: 24px;
-      cursor: pointer;
-      width: 100%;
-      max-width: 300px;
-    }
-    
-    /* Mobile Nav */
-    .mobile-nav {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      border-top: 1px solid var(--border);
-      padding: 8px;
-      gap: 4px;
-      z-index: 100;
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-    }
-    
-    .mobile-nav-link {
-      flex: 1;
-      padding: 12px 8px;
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-family: var(--font-display);
-      font-size: 12px;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .mobile-nav-link.active {
-      background: var(--primary);
-      color: white;
-    }
-    
-    @media (max-width: 768px) {
-      .mobile-nav { display: flex; }
-      body { padding-bottom: 70px; }
-    }
-      .hero-title { font-size: 2.5rem; }
-      .hero-subtitle { font-size: 1rem; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .form-grid { grid-template-columns: 1fr; }
-      .profile-header { flex-direction: column; align-items: center; text-align: center; }
-      .profile-stats { justify-content: center; flex-wrap: wrap; }
-      .profile-grid { grid-template-columns: 1fr; }
-      .result-card { flex-direction: column; align-items: flex-start; }
-      .result-score { width: 100%; text-align: left; margin-top: 12px; }
-      .nav-cta { display: none; }
-      .nav-links { display: none; }
-      .section-tabs { width: 100%; }
-      .section-tab { flex: 1; }
-      .two-col-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FairHire - Smart Talent Matching</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #2563EB; --primary-dark: #1D4ED8; --accent: #06B6D4; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --bg: #F8FAFC; --text: #1E293B; --text2: #64748B; --text3: #94A3B8; --border: #E2E8F0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; }
+h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+a { text-decoration: none; color: inherit; cursor: pointer; }
+
+/* Navbar */
+.navbar { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #fff; border-bottom: 1px solid var(--border); z-index: 9999; display: flex; align-items: center; }
+.navbar .container { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.logo { font-family: 'Plus Jakarta Sans'; font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
+.nav-links { display: flex; gap: 4px; }
+.nav-link { padding: 8px 16px; background: none; border: none; color: var(--text2); font-size: 14px; font-weight: 600; font-family: 'Plus Jakarta Sans'; cursor: pointer; border-radius: 6px; transition: 0.2s; }
+.nav-link:hover { background: #f1f5f9; color: var(--text); }
+.nav-link.active { background: var(--primary); color: #fff; }
+
+/* Hero */
+.hero { padding: 100px 20px 60px; text-align: center; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: #fff; border: 1px solid var(--border); border-radius: 20px; font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+.hero-badge-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; }
+.hero-title { font-size: 42px; font-weight: 800; margin-bottom: 12px; }
+.hero-title span { background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-subtitle { font-size: 18px; color: var(--text2); max-width: 500px; margin: 0 auto 30px; }
+.btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; font-family: 'Plus Jakarta Sans'; cursor: pointer; transition: 0.2s; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-secondary { background: #fff; border: 1px solid var(--border); color: var(--text); }
+.btn-secondary:hover { background: #f8fafc; }
+
+/* Content */
+.content { padding: 30px 0 60px; display: none; }
+.content.active { display: block; }
+.page-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+.page-subtitle { color: var(--text2); margin-bottom: 24px; }
+
+/* Cards */
+.card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.card-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.card-icon { width: 28px; height: 28px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+.card-icon svg { width: 14px; height: 14px; stroke: #fff; fill: none; }
+
+/* Form */
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.form-group { margin-bottom: 0; }
+label { display: block; font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 6px; }
+input, textarea, select { width: 100%; height: 44px; padding: 0 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; color: var(--text); font-family: inherit; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); background: #fff; }
+textarea { height: 80px; padding: 10px 14px; }
+select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+.btn-group-form { display: flex; gap: 12px; margin-top: 20px; }
+
+/* Tags */
+.tags-container { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; min-height: 44px; }
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; background: #fff; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; }
+.tag-remove { cursor: pointer; color: var(--text3); }
+.tag-remove:hover { color: var(--danger); }
+.tag-input { flex: 1; min-width: 100px; height: 24px; border: none; background: transparent; font-size: 14px; }
+.tag-input:focus { outline: none; }
+.skill-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.skill-suggestion { padding: 4px 10px; background: #fff; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; cursor: pointer; }
+.skill-suggestion:hover { border-color: var(--primary); color: var(--primary); }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+.stat-value { font-family: 'Plus Jakarta Sans'; font-size: 28px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.stat-label { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+/* Section Tabs */
+.section-tabs { display: flex; background: #fff; border-radius: 8px; padding: 4px; margin-bottom: 20px; width: fit-content; margin: 0 auto 20px; }
+.section-tab { padding: 10px 20px; border: none; background: none; color: var(--text2); font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; }
+.section-tab.active { background: var(--primary); color: #fff; }
+
+/* Result Cards */
+.result-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; }
+.result-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.result-rank { width: 36px; height: 36px; background: var(--bg); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans'; font-weight: 700; color: var(--text2); }
+.result-rank.gold { background: linear-gradient(135deg, var(--warning), #fbbf24); color: #fff; }
+.result-rank.silver { background: linear-gradient(135deg, #9ca3af, #d1d5db); color: #fff; }
+.result-rank.bronze { background: linear-gradient(135deg, #cd7f32, #da8a67); color: #fff; }
+.result-info { flex: 1; }
+.result-name { font-weight: 600; margin-bottom: 2px; }
+.result-meta { font-size: 13px; color: var(--text2); display: flex; gap: 12px; }
+.result-skills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.result-skill { padding: 3px 8px; background: var(--bg); border-radius: 4px; font-size: 12px; }
+.result-score { text-align: right; }
+.score-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+.fit-score { padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 700; color: #fff; }
+.fit-score.high { background: var(--success); }
+.fit-score.medium { background: var(--warning); }
+.fit-score.low { background: var(--text3); }
+
+/* Empty */
+.empty-state { text-align: center; padding: 40px; }
+.empty-icon { width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+.empty-icon svg { width: 28px; height: 28px; stroke: #fff; fill: none; }
+.empty-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.empty-subtitle { color: var(--text2); font-size: 14px; }
+
+/* Job Card */
+.job-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 12px; }
+.job-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.job-title { font-size: 16px; font-weight: 600; }
+.job-company { color: var(--text2); font-size: 14px; }
+.job-meta { display: flex; gap: 16px; font-size: 13px; color: var(--text2); }
+.job-desc { font-size: 14px; color: var(--text2); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+
+/* About */
+.about-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.about-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.about-card h3 { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.about-card p { color: var(--text2); font-size: 14px; line-height: 1.6; }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; background: #fff; border-radius: 8px; padding: 4px; margin-bottom: 20px; }
+.tab { flex: 1; padding: 10px; border: none; background: none; color: var(--text2); font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; }
+.tab.active { background: var(--bg); color: var(--text); }
+
+/* Leaderboard */
+.leaderboard-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; }
+.leaderboard-rank { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans'; font-weight: 700; }
+.leaderboard-rank.gold { background: linear-gradient(135deg, var(--warning), #fbbf24); color: #fff; }
+.leaderboard-rank.silver { background: linear-gradient(135deg, #9ca3af, #d1d5db); color: #fff; }
+.leaderboard-rank.bronze { background: linear-gradient(135deg, #cd7f32, #da8a67); color: #fff; }
+.leaderboard-rank.default { background: var(--bg); color: var(--text3); }
+.leaderboard-info { flex: 1; }
+.leaderboard-name { font-weight: 600; }
+.leaderboard-details { font-size: 13px; color: var(--text2); }
+.leaderboard-score { text-align: right; }
+.leaderboard-score-value { font-family: 'Plus Jakarta Sans'; font-size: 20px; font-weight: 700; }
+.leaderboard-score-label { font-size: 12px; color: var(--text3); }
+
+@media (max-width: 768px) {
+  .hero-title { font-size: 28px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .nav-links { display: none; }
+  .section-tabs { width: 100%; }
+  .about-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-  <!-- Mobile Nav Toggle -->
-  <div class="mobile-nav" id="mobile-nav">
-    <button class="mobile-nav-link active" data-page="home" onclick="switchToPage('home')">Home</button>
-    <button class="mobile-nav-link" data-page="students" onclick="switchToPage('students')">Students</button>
-    <button class="mobile-nav-link" data-page="recruiters" onclick="switchToPage('recruiters')">Recruiters</button>
-    <button class="mobile-nav-link" data-page="about" onclick="switchToPage('about')">About</button>
-  </div>
+<!-- Navbar -->
+<nav class="navbar">
+<div class="container">
+<a href="#" class="logo" onclick="showPage('home')">
+<div class="logo-icon">F</div>
+FairHire
+</a>
+<div class="nav-links">
+<a class="nav-link active" onclick="showPage('home')">Home</a>
+<a class="nav-link" onclick="showPage('students')">Students</a>
+<a class="nav-link" onclick="showPage('recruiters')">Recruiters</a>
+<a class="nav-link" onclick="showPage('leaderboard')">Leaderboard</a>
+<a class="nav-link" onclick="showPage('about')">About</a>
+</div>
+</div>
+</nav>
 
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="container">
-      <div class="logo">
-        <div class="logo-icon">
-          <svg viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path d="M20 6L9 17l-5-5"/></svg>
-        </div>
-        FairHire
-      </div>
-      <div class="nav-links">
-        <button class="nav-link active" data-page="home" id="nav-home">Home</button>
-        <button class="nav-link" data-page="students" id="nav-students">Students</button>
-        <button class="nav-link" data-page="recruiters" id="nav-recruiters">Recruiters</button>
-        <button class="nav-link" data-page="about" id="nav-about">About FairHire</button>
-      </div>
-      <div class="nav-cta">
-        <button class="nav-btn" id="nav-student-btn">Find Jobs</button>
-        <button class="nav-btn" id="nav-recruiter-btn">Find Talent</button>
-      </div>
-    </div>
-  </nav>
+<!-- Home -->
+<div id="page-home" class="content active">
+<section class="hero">
+<div class="container">
+<div class="hero-badge"><span class="hero-badge-dot"></span>AI-Powered Matching</div>
+<h1 class="hero-title">Hire Smart.<br><span>Match Fair.</span></h1>
+<p class="hero-subtitle">FairHire connects the best candidates with top companies using intelligent skill-based matching. No bias, just pure fit score algorithm.</p>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="showPage('students')">I'm a Student</button>
+<button class="btn btn-secondary" onclick="showPage('recruiters')">I'm a Recruiter</button>
+</div>
+</div>
+</section>
+</div>
 
-  <!-- Hero Section -->
-  <section class="hero" id="hero-section">
-    <div class="container">
-      <div class="hero-badge">
-        <span class="hero-badge-dot"></span>
-        AI-Powered Matching
-      </div>
-      <h1 class="hero-title">
-        Hire Smart.<br><span class="hero-title-accent">Match Fair.</span>
-      </h1>
-      <p class="hero-subtitle">
-        FairHire connects the best candidates with top companies using intelligent skill-based matching. 
-        No bias, just pure fit score algorithm.
-      </p>
-      <div class="hero-cta">
-        <button class="btn btn-primary" id="hero-student-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 10a3 3 0 100-6 3 3 0 000 6z"/><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><path d="M16 5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-          I'm a Student
-        </button>
-        <button class="btn btn-secondary" id="hero-recruiter-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
-          I'm a Recruiter
-        </button>
-      </div>
-    </div>
-  </section>
+<!-- Students -->
+<div id="page-students" class="content">
+<div class="container">
+<h1 class="page-title">Student Profile</h1>
+<p class="page-subtitle">Build your profile to get matched with opportunities</p>
 
-  <!-- Main Content -->
-  <!-- About Section -->
-  <section class="about-section" id="about-section" style="display: none;">
-    <div class="container">
-      <h2 class="content-title">About FairHire</h2>
-      <p class="content-subtitle">Smart talent matching for the modern workplace</p>
-      
-      <div class="two-col-grid">
-        <div class="card">
-          <h3 class="card-title">
-            <span class="card-icon">
-              <svg viewBox="0 0 24 24" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-            </span>
-            Our Mission
-          </h3>
-          <p style="color: var(--text-secondary); line-height: 1.7;">
-            FairHire aims to eliminate hiring bias by focusing purely on skills, qualifications, and fit. We believe the best candidate should rise to the top based on merit, not credentials or connections.
-          </p>
-        </div>
-        
-        <div class="card">
-          <h3 class="card-title">
-            <span class="card-icon">
-              <svg viewBox="0 0 24 24" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-            </span>
-            How It Works
-          </h3>
-          <p style="color: var(--text-secondary); line-height: 1.7;">
-            Our AI-powered matching algorithm evaluates candidates based on skills, projects, experience, and education to calculate a fair fit score. Recruiters see the best matches ranked by their actual qualifications.
-          </p>
-        </div>
-        
-        <div class="card">
-          <h3 class="card-title">
-            <span class="card-icon">
-              <svg viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </span>
-            Privacy First
-          </h3>
-          <p style="color: var(--text-secondary); line-height: 1.7;">
-            Your data stays yours. We don't share your information with third parties. All profile data is stored locally in your browser and can be deleted at any time.
-          </p>
-        </div>
-        
-        <div class="card">
-          <h3 class="card-title">
-            <span class="card-icon">
-              <svg viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-            </span>
-            For Everyone
-          </h3>
-          <p style="color: var(--text-secondary); line-height: 1.7;">
-            Whether you're a student looking for your first job or a recruiter seeking top talent, FairHire provides a level playing field where skills speak louder than anything else.
-          </p>
-        </div>
-      </div>
-      
-      <div style="text-align: center; margin-top: 40px;">
-        <button class="btn btn-primary" onclick="switchToPage('students')">Get Started</button>
-      </div>
-    </div>
-  </section>
+<div class="card">
+<h3 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Personal</h3>
+<div class="form-grid">
+<div class="form-group"><label>Full Name</label><input type="text" id="student-name" placeholder="John Doe"></div>
+<div class="form-group"><label>Email</label><input type="email" id="student-email" placeholder="john@example.com"></div>
+<div class="form-group"><label>Phone</label><input type="text" id="student-phone" placeholder="+1 555 000 0000"></div>
+<div class="form-group"><label>Location</label><input type="text" id="student-location" placeholder="City, Country"></div>
+</div>
+</div>
 
-  <main class="main-content" id="main-content">
-    <div class="container">
-      <!-- Role Tabs -->
-      <div class="section-tabs" id="section-tabs">
-        <button class="section-tab active" data-view="student">Student View</button>
-        <button class="section-tab" data-view="recruiter">Recruiter View</button>
-      </div>
-      
-      <!-- Student View -->
-      <div id="student-view">
-        <div id="student-form-container">
-          <h2 class="content-title">Build Your Profile</h2>
-          <p class="content-subtitle">Complete your profile to get matched with opportunities that fit your skills</p>
-          
-          <div class="card">
-            <h3 class="card-title">
-              <span class="card-icon">
-                <svg viewBox="0 0 24 24" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              </span>
-              Personal Information
-            </h3>
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" id="student-name" placeholder="John Doe">
-              </div>
-              <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" id="student-email" placeholder="john@example.com">
-              </div>
-              <div class="form-group">
-                <label>Phone</label>
-                <input type="tel" id="student-phone" placeholder="+1 (555) 000-0000">
-              </div>
-              <div class="form-group">
-                <label>Location</label>
-                <input type="text" id="student-location" placeholder="San Francisco, CA">
-              </div>
-              <div class="form-group full">
-                <label>Portfolio / GitHub URL</label>
-                <input type="url" id="student-profile-url" placeholder="https://github.com/johndoe">
-              </div>
-            </div>
-          </div>
-          
-          <div class="card">
-            <h3 class="card-title">
-              <span class="card-icon">
-                <svg viewBox="0 0 24 24" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-              </span>
-              Education
-            </h3>
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Degree</label>
-                <input type="text" id="student-degree" placeholder="Computer Science">
-              </div>
-              <div class="form-group">
-                <label>Institution</label>
-                <input type="text" id="student-institution" placeholder="Stanford University">
-              </div>
-              <div class="form-group">
-                <label>Graduation Year</label>
-                <input type="number" id="student-grad-year" placeholder="2024">
-              </div>
-              <div class="form-group">
-                <label>CGPA / GPA</label>
-                <input type="text" id="student-gpa" placeholder="3.8 / 4.0">
-              </div>
-            </div>
-          </div>
-          
-          <div class="card">
-            <h3 class="card-title">
-              <span class="card-icon">
-                <svg viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </span>
-              Skills
-            </h3>
-            <div class="form-group">
-              <label>Your Technical Skills</label>
-              <div class="tags-container" id="student-skills-container">
-                <input type="text" class="tag-input" id="student-skills-input" placeholder="Type a skill and press Enter">
-              </div>
-              <div class="skill-suggestions">
-                <span class="skill-suggestion" data-skill="JavaScript">JavaScript</span>
-                <span class="skill-suggestion" data-skill="React">React</span>
-                <span class="skill-suggestion" data-skill="Python">Python</span>
-                <span class="skill-suggestion" data-skill="Node.js">Node.js</span>
-                <span class="skill-suggestion" data-skill="TypeScript">TypeScript</span>
-                <span class="skill-suggestion" data-skill="SQL">SQL</span>
-                <span class="skill-suggestion" data-skill="Java">Java</span>
-                <span class="skill-suggestion" data-skill="AWS">AWS</span>
-                <span class="skill-suggestion" data-skill="Docker">Docker</span>
-                <span class="skill-suggestion" data-skill="Git">Git</span>
-                <span class="skill-suggestion" data-skill="Machine Learning">Machine Learning</span>
-                <span class="skill-suggestion" data-skill="GraphQL">GraphQL</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="card">
-            <h3 class="card-title">
-              <span class="card-icon">
-                <svg viewBox="0 0 24 24" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
-              </span>
-              Projects
-            </h3>
-            <div id="student-projects">
-              <div class="form-group">
-                <label>Project Title</label>
-                <input type="text" class="project-title" placeholder="E-commerce Platform">
-              </div>
-              <div class="form-group">
-                <label>Description</label>
-                <textarea class="project-description" placeholder="Built a full-stack e-commerce platform with React and Node.js..."></textarea>
-              </div>
-              <div class="form-group">
-                <label>Technologies Used</label>
-                <input type="text" class="project-tech" placeholder="React, Node.js, MongoDB, Stripe">
-              </div>
-              <div class="form-group">
-                <label>Project Link</label>
-                <input type="url" class="project-link" placeholder="https://github.com/johndoe/project">
-              </div>
-            </div>
-          </div>
-          
-          <div class="card">
-            <h3 class="card-title">
-              <span class="card-icon">
-                <svg viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-              </span>
-              Experience
-            </h3>
-            <div id="student-experience">
-              <div class="form-grid">
-                <div class="form-group">
-                  <label>Job Title</label>
-                  <input type="text" class="exp-title" placeholder="Software Engineering Intern">
-                </div>
-                <div class="form-group">
-                  <label>Company</label>
-                  <input type="text" class="exp-company" placeholder="Tech Corp">
-                </div>
-                <div class="form-group">
-                  <label>Duration (months)</label>
-                  <input type="number" class="exp-duration" placeholder="6">
-                </div>
-                <div class="form-group">
-                  <label>Description</label>
-                  <input type="text" class="exp-description" placeholder="Worked on API development...">
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="btn-group">
-            <button class="btn btn-primary" id="save-student-profile">Save Profile</button>
-            <button class="btn btn-secondary" id="clear-student-form">Clear Form</button>
-          </div>
-        </div>
-        
-        <!-- Profile Display -->
-        <div id="student-profile-display" style="display: none;">
-          <div class="card" style="max-width: 800px; margin: 0 auto;">
-            <div class="profile-header">
-              <div class="profile-avatar" id="profile-avatar">JD</div>
-              <div class="profile-details">
-                <h2 class="profile-name" id="display-name">John Doe</h2>
-                <p class="profile-email" id="display-email">john@example.com</p>
-                <div class="profile-stats">
-                  <div class="profile-stat">
-                    <svg viewBox="0 0 24 24" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span class="profile-stat-value" id="display-location">San Francisco, CA</span>
-                  </div>
-                  <div class="profile-stat">
-                    <svg viewBox="0 0 24 24" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                    <span class="profile-stat-value" id="display-education">Stanford University</span>
-                  </div>
-                  <div class="profile-stat">
-                    <svg viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    <span class="profile-stat-value" id="display-skills-count">5 Skills</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="profile-section">
-              <div class="profile-section-header">
-                <h3 class="profile-section-title">Skills</h3>
-              </div>
-              <div class="result-skills" id="display-skills"></div>
-            </div>
-            
-            <div class="profile-section">
-              <div class="profile-section-header">
-                <h3 class="profile-section-title">Projects</h3>
-              </div>
-              <div id="display-projects"></div>
-            </div>
-            
-            <div class="profile-section">
-              <div class="profile-section-header">
-                <h3 class="profile-section-title">Experience</h3>
-              </div>
-              <div id="display-experience"></div>
-            </div>
-            
-            <div class="btn-group">
-              <button class="btn btn-primary" id="edit-profile">Edit Profile</button>
-            </div>
-          </div>
-          
-          <!-- Job Matches -->
-          <div id="job-matches" style="display: none;">
-            <h2 class="content-title" style="margin-top: 48px;">Matched Jobs</h2>
-            <p class="content-subtitle">Jobs ranked by your fit score - based on skills, projects, and experience</p>
-            <div id="job-matches-list"></div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Recruiter View -->
-      <div id="recruiter-view" style="display: none;">
-        <h2 class="content-title">Recruiter Dashboard</h2>
-        <p class="content-subtitle">Post jobs and find the best candidates with AI-powered matching</p>
-        
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-value" id="stat-jobs">0</div>
-            <div class="stat-label">Active Jobs</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="stat-candidates">0</div>
-            <div class="stat-label">Total Candidates</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="stat-matches">0</div>
-            <div class="stat-label">Total Matches</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="stat-quality">-</div>
-            <div class="stat-label">Avg. Fit Score</div>
-          </div>
-        </div>
-        
-        <div class="tabs">
-          <button class="tab active" data-tab="post">Post Job</button>
-          <button class="tab" data-tab="candidates">Find Candidates</button>
-        </div>
-        
-        <!-- Post Job Tab -->
-        <div id="tab-post">
-          <div class="card">
-            <h3 class="card-title">
-              <span class="card-icon">
-                <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-              </span>
-              Create New Job Posting
-            </h3>
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Company Name</label>
-                <input type="text" id="job-company" placeholder="TechCorp Inc.">
-              </div>
-              <div class="form-group">
-                <label>Job Title</label>
-                <input type="text" id="job-title" placeholder="Software Engineer">
-              </div>
-              <div class="form-group">
-                <label>Location Type</label>
-                <select id="job-location">
-                  <option value="">Select location</option>
-                  <option value="Remote">Remote</option>
-                  <option value="Hybrid">Hybrid</option>
-                  <option value="On-site">On-site</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Job Type</label>
-                <select id="job-type">
-                  <option value="">Select type</option>
-                  <option value="Full-time">Full-time</option>
-                  <option value="Part-time">Part-time</option>
-                  <option value="Internship">Internship</option>
-                  <option value="Contract">Contract</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Experience Level</label>
-                <select id="job-experience">
-                  <option value="">Select level</option>
-                  <option value="Entry">Entry Level</option>
-                  <option value="Mid">Mid Level</option>
-                  <option value="Senior">Senior</option>
-                  <option value="Lead">Lead</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Salary Range</label>
-                <input type="text" id="job-salary" placeholder="$80k - $120k">
-              </div>
-            </div>
-            
-            <div class="form-group">
-              <label>Required Skills (Must have)</label>
-              <div class="tags-container" id="job-required-skills-container">
-                <input type="text" class="tag-input" id="job-required-skills-input" placeholder="Type a skill and press Enter">
-              </div>
-              <div class="skill-suggestions">
-                <span class="skill-suggestion" data-skill="JavaScript">JavaScript</span>
-                <span class="skill-suggestion" data-skill="React">React</span>
-                <span class="skill-suggestion" data-skill="Python">Python</span>
-                <span class="skill-suggestion" data-skill="Node.js">Node.js</span>
-                <span class="skill-suggestion" data-skill="TypeScript">TypeScript</span>
-                <span class="skill-suggestion" data-skill="SQL">SQL</span>
-                <span class="skill-suggestion" data-skill="Java">Java</span>
-                <span class="skill-suggestion" data-skill="AWS">AWS</span>
-                <span class="skill-suggestion" data-skill="Docker">Docker</span>
-                <span class="skill-suggestion" data-skill="Git">Git</span>
-              </div>
-            </div>
-            
-            <div class="form-group">
-              <label>Preferred Skills (Nice to have)</label>
-              <div class="tags-container" id="job-preferred-skills-container">
-                <input type="text" class="tag-input" id="job-preferred-skills-input" placeholder="Type a skill and press Enter">
-              </div>
-            </div>
-            
-            <div class="form-group">
-              <label>Job Description</label>
-              <textarea id="job-description" placeholder="We are looking for a skilled software engineer to join our team..."></textarea>
-            </div>
-            
-            <div class="btn-group">
-              <button class="btn btn-primary" id="post-job">Post Job</button>
-              <button class="btn btn-secondary" id="clear-job-form">Clear</button>
-            </div>
-          </div>
-          
-          <!-- Posted Jobs -->
-          <div id="posted-jobs">
-            <h3 class="card-title" style="margin-top: 32px; margin-bottom: 20px;">Your Posted Jobs</h3>
-            <div id="jobs-list"></div>
-          </div>
-        </div>
-        
-        <!-- Candidates Tab -->
-        <div id="tab-candidates" style="display: none;">
-          <select id="select-job" class="filter-select">
-            <option value="">Select a job to see matched candidates</option>
-          </select>
-          
-          <div id="candidate-matches">
-            <div class="empty-state">
-              <div class="empty-icon">
-                <svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-              </div>
-              <h3 class="empty-title">No candidates yet</h3>
-              <p class="empty-subtitle">Post a job to start receiving matches</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
+<div class="card">
+<h3 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>Education</h3>
+<div class="form-grid">
+<div class="form-group"><label>Degree</label><input type="text" id="student-degree" placeholder="Computer Science"></div>
+<div class="form-group"><label>Institution</label><input type="text" id="student-institution" placeholder="University Name"></div>
+<div class="form-group"><label>Year</label><input type="number" id="student-year" placeholder="2024"></div>
+<div class="form-group"><label>GPA</label><input type="text" id="student-gpa" placeholder="3.8"></div>
+</div>
+</div>
 
-  <script>
-    // ========== STATE ==========
-    const state = {
-      page: 'home',
-      role: 'student',
-      currentTab: 'post',
-      student: null,
-      jobs: [],
-      students: []
-    };
-    
-    // ========== STUDENT DATA ==========
-    const studentSkills = [];
-    
-    // ========== INIT ==========
-    function init() {
-      loadFromStorage();
-      setupEventListeners();
-      render();
-    }
-    
-    function loadFromStorage() {
-      const savedStudent = localStorage.getItem('fairhire_student');
-      const savedJobs = localStorage.getItem('fairhire_jobs');
-      const savedStudents = localStorage.getItem('fairhire_students');
-      
-      if (savedStudent) state.student = JSON.parse(savedStudent);
-      if (savedJobs) state.jobs = JSON.parse(savedJobs);
-      if (savedStudents) state.students = JSON.parse(savedStudents);
-    }
-    
-    function saveToStorage() {
-      if (state.student) localStorage.setItem('fairhire_student', JSON.stringify(state.student));
-      localStorage.setItem('fairhire_jobs', JSON.stringify(state.jobs));
-      localStorage.setItem('fairhire_students', JSON.stringify(state.students));
-    }
-    
-    // ========== EVENT LISTENERS ==========
-    function setupEventListeners() {
-      // Navigation links
-      document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => switchToPage(link.dataset.page));
-      });
-      
-      // Hero buttons
-      document.getElementById('hero-student-btn').addEventListener('click', () => switchToPage('students'));
-      document.getElementById('hero-recruiter-btn').addEventListener('click', () => switchToPage('recruiters'));
-      document.getElementById('nav-student-btn').addEventListener('click', () => switchToPage('students'));
-      document.getElementById('nav-recruiter-btn').addEventListener('click', () => switchToPage('recruiters'));
-      
-      // Section tabs
-      document.querySelectorAll('.section-tab').forEach(tab => {
-        tab.addEventListener('click', () => switchToPage(tab.dataset.view));
-      });
-      
-      // Recruiter tabs
-      document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          state.currentTab = tab.dataset.tab;
-          render();
-        });
-      });
-      
-      // Skill inputs
-      setupTagInput('student-skills', studentSkills);
-      setupTagInput('job-required-skills', []);
-      setupTagInput('job-preferred-skills', []);
-      
-      // Skill suggestions
-      document.querySelectorAll('.skill-suggestion').forEach(s => {
-        s.addEventListener('click', () => {
-          const skill = s.dataset.skill;
-          const container = s.closest('.form-group')?.querySelector('.tags-container') || s.closest('.card')?.querySelector('.tags-container');
-          if (!container) return;
-          
-          if (container.id.includes('student')) {
-            if (!studentSkills.includes(skill)) { studentSkills.push(skill); renderStudentSkills(); }
-          } else if (container.id.includes('required')) {
-            if (!window.jobRequiredSkills) window.jobRequiredSkills = [];
-            if (!window.jobRequiredSkills.includes(skill)) { window.jobRequiredSkills.push(skill); renderJobSkills('required'); }
-          } else if (container.id.includes('preferred')) {
-            if (!window.jobPreferredSkills) window.jobPreferredSkills = [];
-            if (!window.jobPreferredSkills.includes(skill)) { window.jobPreferredSkills.push(skill); renderJobSkills('preferred'); }
-          }
-        });
-      });
-      
-      // Form buttons
-      document.getElementById('save-student-profile').addEventListener('click', saveStudentProfile);
-      document.getElementById('clear-student-form').addEventListener('click', clearStudentForm);
-      document.getElementById('edit-profile').addEventListener('click', () => {
-        document.getElementById('student-form-container').style.display = 'block';
-        document.getElementById('student-profile-display').style.display = 'none';
-      });
-      document.getElementById('post-job').addEventListener('click', postJob);
-      document.getElementById('clear-job-form').addEventListener('click', clearJobForm);
-      document.getElementById('select-job').addEventListener('change', e => renderCandidatesForJob(e.target.value));
-    }
-    
-    function switchToPage(page) {
-      state.page = page;
-      
-      // Update nav links
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.page === page));
-      document.querySelectorAll('.mobile-nav-link').forEach(l => l.classList.toggle('active', l.dataset.page === page));
-      
-      // Show/hide sections
-      document.getElementById('hero-section').style.display = page === 'home' ? 'block' : 'none';
-      document.getElementById('about-section').style.display = page === 'about' ? 'block' : 'none';
-      document.getElementById('main-content').style.display = (page === 'students' || page === 'recruiters') ? 'block' : 'none';
-      document.getElementById('section-tabs').style.display = (page === 'students' || page === 'recruiters') ? 'flex' : 'none';
-      
-      // Set role based on page
-      if (page === 'students') {
-        state.role = 'student';
-      } else if (page === 'recruiters') {
-        state.role = 'recruiter';
-      }
-      
-      // Update section tabs
-      document.querySelectorAll('.section-tab').forEach(t => {
-        t.classList.toggle('active', t.dataset.view === state.role);
-      });
-      
-      render();
-      
-      if (page !== 'home') {
-        window.scrollTo({ top: 350, behavior: 'smooth' });
-      }
-    }
-    
-    function switchToView(view) {
-      state.role = view;
-      document.querySelectorAll('.section-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
-      render();
-      window.scrollTo({ top: 400, behavior: 'smooth' });
-    }
-    
-    function setupTagInput(type, array) {
-      const input = document.getElementById(`${type}-input`);
-      const container = document.getElementById(`${type}-container`);
-      if (!input || !container) return;
-      
-      input.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && input.value.trim()) {
-          e.preventDefault();
-          const skill = input.value.trim();
-          if (!array.includes(skill)) { array.push(skill); renderTagInput(type, array); }
-          input.value = '';
-        }
-      });
-    }
-    
-    function renderTagInput(type, array) {
-      const container = document.getElementById(`${type}-container`);
-      const input = container.querySelector('.tag-input');
-      container.querySelectorAll('.tag').forEach(t => t.remove());
-      
-      array.forEach(skill => {
-        const tag = document.createElement('span');
-        tag.className = 'tag';
-        tag.innerHTML = `${skill}<button class="tag-remove" data-skill="${skill}">&times;</button>`;
-        container.insertBefore(tag, input);
-      });
-      
-      container.querySelectorAll('.tag-remove').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const idx = array.indexOf(btn.dataset.skill);
-          if (idx > -1) { array.splice(idx, 1); renderTagInput(type, array); }
-        });
-      });
-    }
-    
-    // ========== RENDER ==========
-    function render() {
-      const studentView = document.getElementById('student-view');
-      const recruiterView = document.getElementById('recruiter-view');
-      
-      if (state.role === 'student') {
-        studentView.style.display = 'block';
-        recruiterView.style.display = 'none';
-        renderStudentView();
-      } else {
-        studentView.style.display = 'none';
-        recruiterView.style.display = 'block';
-        renderRecruiterView();
-      }
-    }
-    
-    function renderStudentView() {
-      const formContainer = document.getElementById('student-form-container');
-      const profileDisplay = document.getElementById('student-profile-display');
-      const jobMatches = document.getElementById('job-matches');
-      
-      if (state.student) {
-        formContainer.style.display = 'none';
-        profileDisplay.style.display = 'block';
-        jobMatches.style.display = 'block';
-        
-        const initials = state.student.name.split(' ').map(n => n[0]).join('').toUpperCase();
-        document.getElementById('profile-avatar').textContent = initials;
-        document.getElementById('display-name').textContent = state.student.name;
-        document.getElementById('display-email').textContent = state.student.email;
-        document.getElementById('display-location').textContent = state.student.location || 'Not specified';
-        document.getElementById('display-education').textContent = `${state.student.degree || ''} ${state.student.institution || ''}`.trim() || 'Not specified';
-        document.getElementById('display-skills-count').textContent = `${(state.student.skills || []).length} Skills`;
-        
-        const skillsHtml = (state.student.skills || []).map(s => `<span class="result-skill">${s}</span>`).join('');
-        document.getElementById('display-skills').innerHTML = skillsHtml;
-        
-        const projHtml = (state.student.projects || []).map(p => `
-          <div class="profile-item" style="margin-bottom: 12px;">
-            <div class="profile-item-title">${p.title}</div>
-            <div class="profile-item-subtitle">${p.description || ''}</div>
-            <div class="result-skills" style="margin-top: 8px;">
-              ${(p.tech || '').split(',').map(t => `<span class="result-skill">${t.trim()}</span>`).join('')}
-            </div>
-          </div>
-        `).join('');
-        document.getElementById('display-projects').innerHTML = projHtml || '<p style="color: var(--text-muted);">No projects added</p>';
-        
-        const expHtml = (state.student.experience || []).map(e => `
-          <div class="profile-item" style="margin-bottom: 12px;">
-            <div class="profile-item-title">${e.title}</div>
-            <div class="profile-item-subtitle">${e.company} - ${e.duration} months</div>
-          </div>
-        `).join('');
-        document.getElementById('display-experience').innerHTML = expHtml || '<p style="color: var(--text-muted);">No experience added</p>';
-        
-        renderJobMatches();
-      } else {
-        formContainer.style.display = 'block';
-        profileDisplay.style.display = 'none';
-        jobMatches.style.display = 'none';
-      }
-    }
-    
-    function renderStudentSkills() { renderTagInput('student-skills', studentSkills); }
-    
-    function renderRecruiterView() {
-      document.getElementById('tab-post').style.display = state.currentTab === 'post' ? 'block' : 'none';
-      document.getElementById('tab-candidates').style.display = state.currentTab === 'candidates' ? 'block' : 'none';
-      
-      // Stats
-      document.getElementById('stat-jobs').textContent = state.jobs.length;
-      document.getElementById('stat-candidates').textContent = state.students.length;
-      
-      let totalMatches = 0, totalScore = 0;
-      state.jobs.forEach(job => {
-        const matches = calculateMatches(job);
-        totalMatches += matches.length;
-        matches.forEach(m => totalScore += m.score);
-      });
-      
-      const avgScore = totalMatches > 0 ? Math.round(totalScore / totalMatches) : 0;
-      document.getElementById('stat-matches').textContent = totalMatches;
-      document.getElementById('stat-quality').textContent = avgScore > 0 ? `${avgScore}%` : '-';
-      
-      // Jobs list
-      renderJobsList();
-      
-      // Job select
-      const select = document.getElementById('select-job');
-      select.innerHTML = '<option value="">Select a job to see matched candidates</option>';
-      state.jobs.forEach((job, idx) => {
-        const opt = document.createElement('option');
-        opt.value = idx;
-        opt.textContent = `${job.title} at ${job.company}`;
-        select.appendChild(opt);
-      });
-    }
-    
-    function renderJobsList() {
-      const list = document.getElementById('jobs-list');
-      if (state.jobs.length === 0) {
-        list.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">
-              <svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-            </div>
-            <h3 class="empty-title">No jobs posted</h3>
-            <p class="empty-subtitle">Post your first job to find candidates</p>
-          </div>
-        `;
-        return;
-      }
-      
-      list.innerHTML = state.jobs.map((job, idx) => `
-        <div class="job-card fade-in">
-          <div class="job-header">
-            <div>
-              <h4 class="job-title">${job.title}</h4>
-              <p class="job-company">${job.company}</p>
-            </div>
-            <button class="btn btn-secondary" onclick="deleteJob(${idx})" style="padding: 8px 16px; font-size: 13px;">Delete</button>
-          </div>
-          <div class="job-meta">
-            <span class="job-meta-item">
-              <svg viewBox="0 0 24 24" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              ${job.location}
-            </span>
-            <span class="job-meta-item">
-              <svg viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-              ${job.type}
-            </span>
-            <span class="job-meta-item">
-              <svg viewBox="0 0 24 24" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-              ${job.experience}
-            </span>
-          </div>
-          <div class="result-skills">
-            ${(job.requiredSkills || []).map(s => `<span class="result-skill">${s}</span>`).join('')}
-          </div>
-          ${job.description ? `<p class="job-description" style="margin-top: 16px;">${job.description}</p>` : ''}
-        </div>
-      `).join('');
-    }
-    
-    function renderCandidatesForJob(jobIdx) {
-      const container = document.getElementById('candidate-matches');
-      
-      if (jobIdx === '' || state.students.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">
-              <svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            </div>
-            <h3 class="empty-title">No candidates yet</h3>
-            <p class="empty-subtitle">Students will appear here when they create profiles</p>
-          </div>
-        `;
-        return;
-      }
-      
-      const job = state.jobs[jobIdx];
-      const matches = calculateMatches(job);
-      
-      if (matches.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">
-              <svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            </div>
-            <h3 class="empty-title">No matches found</h3>
-            <p class="empty-subtitle">Try adjusting your required skills</p>
-          </div>
-        `;
-        return;
-      }
-      
-      container.innerHTML = matches.map((match, idx) => {
-        const student = match.student;
-        let rankClass = idx === 0 ? 'gold' : idx === 1 ? 'silver' : idx === 2 ? 'bronze' : '';
-        
-        return `
-          <div class="result-card fade-in">
-            <div class="result-rank ${rankClass}">#${idx + 1}</div>
-            <div class="result-info">
-              <div class="result-name">${student.name}</div>
-              <div class="result-meta">
-                <span class="result-meta-item">
-                  <svg viewBox="0 0 24 24" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                  ${student.degree || 'N/A'}
-                </span>
-                <span class="result-meta-item">
-                  <svg viewBox="0 0 24 24" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  ${student.location || 'N/A'}
-                </span>
-                <span class="result-meta-item">
-                  <svg viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-                  ${student.experience?.length || 0} exp
-                </span>
-              </div>
-              <div class="result-skills">
-                ${(student.skills || []).slice(0, 4).map(s => `<span class="result-skill">${s}</span>`).join('')}
-              </div>
-            </div>
-            <div class="result-score">
-              <div class="score-label">Fit Score</div>
-              <div class="fit-score ${match.score >= 80 ? 'high' : match.score >= 60 ? 'medium' : 'low'}">${Math.round(match.score)}%</div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-    
-    function renderJobMatches() {
-      const list = document.getElementById('job-matches-list');
-      
-      if (state.jobs.length === 0) {
-        list.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">
-              <svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-            </div>
-            <h3 class="empty-title">No jobs available</h3>
-            <p class="empty-subtitle">Check back later for new opportunities</p>
-          </div>
-        `;
-        return;
-      }
-      
-      let allMatches = [];
-      state.jobs.forEach(job => {
-        const matches = calculateMatches(state.student);
-        matches.forEach(m => m.job = job);
-        allMatches = allMatches.concat(matches);
-      });
-      
-      allMatches.sort((a, b) => b.score - a.score);
-      allMatches = allMatches.slice(0, 10);
-      
-      if (allMatches.length === 0) {
-        list.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">
-              <svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            </div>
-            <h3 class="empty-title">No matches found</h3>
-            <p class="empty-subtitle">Update your skills to get better matches</p>
-          </div>
-        `;
-        return;
-      }
-      
-      list.innerHTML = allMatches.map((match, idx) => {
-        const job = match.job;
-        let rankClass = idx === 0 ? 'gold' : idx === 1 ? 'silver' : idx === 2 ? 'bronze' : '';
-        
-        return `
-          <div class="result-card fade-in">
-            <div class="result-rank ${rankClass}">#${idx + 1}</div>
-            <div class="result-info">
-              <div class="result-name">${job.title}</div>
-              <div class="result-meta">
-                <span class="result-meta-item">
-                  <svg viewBox="0 0 24 24" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
-                  ${job.company}
-                </span>
-                <span class="result-meta-item">
-                  <svg viewBox="0 0 24 24" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  ${job.location}
-                </span>
-                <span class="result-meta-item">
-                  <svg viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-                  ${job.type}
-                </span>
-              </div>
-              <div class="result-skills">
-                ${(job.requiredSkills || []).slice(0, 4).map(s => `<span class="result-skill">${s}</span>`).join('')}
-              </div>
-            </div>
-            <div class="result-score">
-              <div class="score-label">Fit Score</div>
-              <div class="fit-score ${match.score >= 80 ? 'high' : match.score >= 60 ? 'medium' : 'low'}">${Math.round(match.score)}%</div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-    
-    // ========== MATCHING ALGORITHM ==========
-    function calculateMatches(jobOrStudent) {
-      return state.students.map(student => {
-        const score = calculateFitScore(student, jobOrStudent);
-        return { student, score };
-      }).filter(m => m.score > 0).sort((a, b) => b.score - a.score);
-    }
-    
-    function calculateFitScore(student, job) {
-      let score = 0, weight = 0;
-      
-      // 1. Skill Match (40%)
-      const requiredSkills = job.requiredSkills || [];
-      const studentSkills = student.skills || [];
-      
-      if (requiredSkills.length > 0) {
-        const matchedRequired = requiredSkills.filter(s => studentSkills.some(ss => ss.toLowerCase() === s.toLowerCase())).length;
-        const requiredScore = (matchedRequired / requiredSkills.length) * 100;
-        
-        const preferredSkills = job.preferredSkills || [];
-        if (preferredSkills.length > 0) {
-          const matchedPreferred = preferredSkills.filter(s => studentSkills.some(ss => ss.toLowerCase() === s.toLowerCase())).length;
-          const preferredBonus = (matchedPreferred / preferredSkills.length) * 20;
-          score += (requiredScore * 0.4) + Math.min(preferredBonus, 20);
-        } else {
-          score += requiredScore * 0.4;
-        }
-      } else {
-        score += 40;
-      }
-      weight += 40;
-      
-      // 2. Experience (25%)
-      const expLevel = { 'Entry': 1, 'Mid': 2, 'Senior': 3, 'Lead': 4 };
-      const jobExp = expLevel[job.experience] || 2;
-      const studentExp = (student.experience || []).length;
-      
-      if (studentExp >= jobExp) score += 25;
-      else if (studentExp > 0) score += (studentExp / jobExp) * 25;
-      weight += 25;
-      
-      // 3. Project Relevance (20%)
-      const allTech = new Set();
-      (student.projects || []).forEach(p => {
-        if (p.tech) p.tech.split(',').forEach(t => allTech.add(t.trim().toLowerCase()));
-      });
-      
-      const jobSkills = [...(job.requiredSkills || []), ...(job.preferredSkills || [])];
-      if (jobSkills.length > 0 && allTech.size > 0) {
-        const matched = jobSkills.filter(s => allTech.has(s.toLowerCase())).length;
-        score += (matched / jobSkills.length) * 20;
-      } else {
-        score += 10;
-      }
-      weight += 20;
-      
-      // 4. Education (15%)
-      if (student.degree?.toLowerCase().includes('computer')) score += 10;
-      else if (student.degree) score += 5;
-      if (student.gpa) score += student.gpa >= 3.5 ? 5 : student.gpa >= 3.0 ? 3 : 0;
-      weight += 15;
-      
-      return (score / weight) * 100;
-    }
-    
-    // ========== ACTIONS ==========
-    function saveStudentProfile() {
-      const name = document.getElementById('student-name').value.trim();
-      const email = document.getElementById('student-email').value.trim();
-      
-      if (!name || !email) { alert('Please fill in your name and email'); return; }
-      
-      const projects = [];
-      const projTitle = document.querySelector('.project-title')?.value?.trim();
-      if (projTitle) {
-        projects.push({
-          title: projTitle,
-          description: document.querySelector('.project-description')?.value?.trim(),
-          tech: document.querySelector('.project-tech')?.value?.trim()
-        });
-      }
-      
-      const experience = [];
-      const expTitle = document.querySelector('.exp-title')?.value?.trim();
-      if (expTitle) {
-        experience.push({
-          title: expTitle,
-          company: document.querySelector('.exp-company')?.value?.trim(),
-          duration: document.querySelector('.exp-duration')?.value?.trim() || '0',
-          description: document.querySelector('.exp-description')?.value?.trim()
-        });
-      }
-      
-      state.student = {
-        name, email,
-        phone: document.getElementById('student-phone').value.trim(),
-        location: document.getElementById('student-location').value.trim(),
-        profileUrl: document.getElementById('student-profile-url').value.trim(),
-        degree: document.getElementById('student-degree').value.trim(),
-        institution: document.getElementById('student-institution').value.trim(),
-        gradYear: document.getElementById('student-grad-year').value.trim(),
-        gpa: document.getElementById('student-gpa').value.trim(),
-        skills: [...studentSkills],
-        projects,
-        experience
-      };
-      
-      const existingIdx = state.students.findIndex(s => s.email === email);
-      if (existingIdx > -1) state.students[existingIdx] = state.student;
-      else state.students.push(state.student);
-      
-      saveToStorage();
-      render();
-    }
-    
-    function clearStudentForm() {
-      document.querySelectorAll('#student-form-container input, #student-form-container textarea').forEach(el => el.value = '');
-      document.querySelectorAll('#student-form-container select').forEach(el => el.selectedIndex = 0);
-      studentSkills.length = 0;
-      renderStudentSkills();
-    }
-    
-    window.jobRequiredSkills = [];
-    window.jobPreferredSkills = [];
-    
-    function postJob() {
-      const company = document.getElementById('job-company').value.trim();
-      const title = document.getElementById('job-title').value.trim();
-      
-      if (!company || !title) { alert('Please fill in company name and job title'); return; }
-      
-      state.jobs.push({
-        company, title,
-        location: document.getElementById('job-location').value || 'Not specified',
-        type: document.getElementById('job-type').value || 'Full-time',
-        experience: document.getElementById('job-experience').value || 'Mid',
-        salary: document.getElementById('job-salary').value.trim(),
-        requiredSkills: [...window.jobRequiredSkills],
-        preferredSkills: [...window.jobPreferredSkills],
-        description: document.getElementById('job-description').value.trim()
-      });
-      
-      saveToStorage();
-      render();
-    }
-    
-    function clearJobForm() {
-      document.querySelectorAll('#tab-post input, #tab-post textarea').forEach(el => el.value = '');
-      document.querySelectorAll('#tab-post select').forEach(el => el.selectedIndex = 0);
-      window.jobRequiredSkills = [];
-      window.jobPreferredSkills = [];
-      renderJobSkills('required');
-      renderJobSkills('preferred');
-    }
-    
-    function renderJobSkills(type) {
-      renderTagInput(`job-${type}-skills`, type === 'required' ? window.jobRequiredSkills : window.jobPreferredSkills);
-    }
-    
-    window.deleteJob = function(idx) {
-      if (confirm('Delete this job?')) {
-        state.jobs.splice(idx, 1);
-        saveToStorage();
-        render();
-      }
-    };
-    
-    // Start
-    init();
-  </script>
+<div class="card">
+<h3 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Skills</h3>
+<div class="form-group">
+<div class="tags-container" id="skills-container"><input type="text" class="tag-input" id="skills-input" placeholder="Type skill + Enter"></div>
+<div class="skill-suggestions">
+<span class="skill-suggestion" onclick="addSkill('JavaScript')">JavaScript</span>
+<span class="skill-suggestion" onclick="addSkill('React')">React</span>
+<span class="skill-suggestion" onclick="addSkill('Python')">Python</span>
+<span class="skill-suggestion" onclick="addSkill('Node.js')">Node.js</span>
+<span class="skill-suggestion" onclick="addSkill('TypeScript')">TypeScript</span>
+<span class="skill-suggestion" onclick="addSkill('SQL')">SQL</span>
+<span class="skill-suggestion" onclick="addSkill('Java')">Java</span>
+<span class="skill-suggestion" onclick="addSkill('AWS')">AWS</span>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h3 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></span>Project</h3>
+<div class="form-group"><label>Project Title</label><input type="text" id="project-title" placeholder="My Project"></div>
+<div class="form-group"><label>Description</label><textarea id="project-desc" placeholder="What did you build?"></textarea></div>
+<div class="form-group"><label>Technologies</label><input type="text" id="project-tech" placeholder="React, Node.js, MongoDB"></div>
+</div>
+
+<div class="btn-group-form">
+<button class="btn btn-primary" onclick="saveStudentProfile()">Save Profile</button>
+<button class="btn btn-secondary" onclick="clearStudentForm()">Clear</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Recruiters -->
+<div id="page-recruiters" class="content">
+<div class="container">
+<h1 class="page-title">Recruiter Dashboard</h1>
+<p class="page-subtitle">Post jobs and find the best candidates</p>
+
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-value" id="stat-jobs">0</div><div class="stat-label">Active Jobs</div></div>
+<div class="stat-card"><div class="stat-value" id="stat-candidates">0</div><div class="stat-label">Candidates</div></div>
+<div class="stat-card"><div class="stat-value" id="stat-matches">0</div><div class="stat-label">Matches</div></div>
+<div class="stat-card"><div class="stat-value">-</div><div class="stat-label">Avg Score</div></div>
+</div>
+
+<div class="tabs">
+<button class="tab active" onclick="showTab('post')">Post Job</button>
+<button class="tab" onclick="showTab('candidates')">Find Talent</button>
+</div>
+
+<div id="tab-post">
+<div class="card">
+<h3 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg></span>Job Details</h3>
+<div class="form-grid">
+<div class="form-group"><label>Company</label><input type="text" id="job-company" placeholder="Company Name"></div>
+<div class="form-group"><label>Job Title</label><input type="text" id="job-title" placeholder="Software Engineer"></div>
+<div class="form-group"><label>Location</label><select id="job-location"><option value="">Select</option><option>Remote</option><option>Hybrid</option><option>On-site</option></select></div>
+<div class="form-group"><label>Type</label><select id="job-type"><option value="">Select</option><option>Full-time</option><option>Part-time</option><option>Internship</option></select></div>
+</div>
+</div>
+
+<div class="card">
+<h3 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Required Skills</h3>
+<div class="form-group">
+<div class="tags-container" id="job-skills-container"><input type="text" class="tag-input" id="job-skills-input" placeholder="Type + Enter"></div>
+</div>
+</div>
+
+<div class="form-group"><label>Description</label><textarea id="job-desc" placeholder="Job description..."></textarea></div>
+
+<div class="btn-group-form">
+<button class="btn btn-primary" onclick="postJob()">Post Job</button>
+<button class="btn btn-secondary" onclick="clearJobForm()">Clear</button>
+</div>
+</div>
+
+<div id="posted-jobs"></div>
+</div>
+
+<div id="tab-candidates" style="display:none;">
+<select id="job-select" style="margin-bottom:20px;" onchange="showCandidates()">
+<option value="">Select a job</option>
+</select>
+<div id="candidate-list"></div>
+</div>
+</div>
+</div>
+
+<!-- Leaderboard -->
+<div id="page-leaderboard" class="content">
+<div class="container">
+<h1 class="page-title">Assessment Leaderboard</h1>
+<p class="page-subtitle">Top performers across all assessments</p>
+<div class="tabs" style="max-width:300px;">
+<button class="tab active">All</button>
+<button class="tab">Aptitude</button>
+<button class="tab">Logical</button>
+<button class="tab">Technical</button>
+</div>
+<div id="leaderboard-list">
+<div class="empty-state">
+<div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+<div class="empty-title">No results yet</div>
+<div class="empty-subtitle">Take assessments to appear on leaderboard</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- About -->
+<div id="page-about" class="content">
+<div class="container">
+<h1 class="page-title">About FairHire</h1>
+<p class="page-subtitle">Smart talent matching for the modern workplace</p>
+<div class="about-grid">
+<div class="about-card">
+<h3><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>Our Mission</h3>
+<p>FairHire aims to eliminate hiring bias by focusing purely on skills, qualifications, and fit. We believe the best candidate should rise to the top based on merit.</p>
+</div>
+<div class="about-card">
+<h3><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></span>How It Works</h3>
+<p>Our matching algorithm evaluates candidates based on skills, projects, experience, and education to calculate a fair fit score.</p>
+</div>
+<div class="about-card">
+<h3><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Privacy First</h3>
+<p>Your data stays yours. We don't share your information with third parties. All profile data is stored locally.</p>
+</div>
+<div class="about-card">
+<h3><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>For Everyone</h3>
+<p>Whether you're a student looking for your first job or a recruiter seeking top talent, FairHire provides a level playing field.</p>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+// State
+let currentPage = 'home';
+let currentTab = 'post';
+let studentSkills = [];
+let jobSkills = [];
+let jobs = [];
+let students = [];
+
+// Load data
+if(localStorage.fairhire_jobs) jobs = JSON.parse(localStorage.fairhire_jobs);
+if(localStorage.fairhire_students) students = JSON.parse(localStorage.fairhire_students);
+if(localStorage.fairhire_student) {
+const saved = JSON.parse(localStorage.fairhire_student);
+document.getElementById('student-name').value = saved.name || '';
+document.getElementById('student-email').value = saved.email || '';
+document.getElementById('student-phone').value = saved.phone || '';
+document.getElementById('student-location').value = saved.location || '';
+document.getElementById('student-degree').value = saved.degree || '';
+document.getElementById('student-institution').value = saved.institution || '';
+document.getElementById('student-year').value = saved.year || '';
+document.getElementById('student-gpa').value = saved.gpa || '';
+document.getElementById('project-title').value = saved.project?.title || '';
+document.getElementById('project-desc').value = saved.project?.desc || '';
+document.getElementById('project-tech').value = saved.project?.tech || '';
+studentSkills = saved.skills || [];
+renderSkills();
+}
+
+// Functions
+function showPage(page) {
+console.log('showPage:', page);
+currentPage = page;
+document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+document.getElementById('page-'+page).classList.add('active');
+document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+event && event.target.closest('.nav-link') && event.target.classList.add('active');
+updateStats();
+if(page === 'recruiters') updateJobSelect();
+}
+
+function showTab(tab) {
+currentTab = tab;
+document.getElementById('tab-post').style.display = tab === 'post' ? 'block' : 'none';
+document.getElementById('tab-candidates').style.display = tab === 'candidates' ? 'block' : 'none';
+document.querySelectorAll('#page-recruiters .tab').forEach(t => t.classList.remove('active'));
+event.target.classList.add('active');
+}
+
+function addSkill(skill) {
+if(!studentSkills.includes(skill)) { studentSkills.push(skill); renderSkills(); }
+}
+
+function renderSkills() {
+const container = document.getElementById('skills-container');
+const input = document.getElementById('skills-input');
+container.querySelectorAll('.tag').forEach(t => t.remove());
+studentSkills.forEach(s => {
+const tag = document.createElement('span');
+tag.className = 'tag';
+tag.innerHTML = s+'<span class="tag-remove" onclick="removeSkill(\''+s+'\')">×</span>';
+container.insertBefore(tag, input);
+});
+}
+
+function removeSkill(skill) {
+studentSkills = studentSkills.filter(s => s !== skill);
+renderSkills();
+}
+
+document.getElementById('skills-input').addEventListener('keydown', e => {
+if(e.key === 'Enter' && e.target.value.trim()) {
+addSkill(e.target.value.trim());
+e.target.value = '';
+}
+});
+
+function saveStudentProfile() {
+const name = document.getElementById('student-name').value.trim();
+const email = document.getElementById('student-email').value.trim();
+if(!name || !email) { alert('Please enter name and email'); return; }
+const student = {
+name, email,
+phone: document.getElementById('student-phone').value,
+location: document.getElementById('student-location').value,
+degree: document.getElementById('student-degree').value,
+institution: document.getElementById('student-institution').value,
+year: document.getElementById('student-year').value,
+gpa: document.getElementById('student-gpa').value,
+project: { title: document.getElementById('project-title').value, desc: document.getElementById('project-desc').value, tech: document.getElementById('project-tech').value },
+skills: [...studentSkills]
+};
+localStorage.fairhire_student = JSON.stringify(student);
+const existing = students.findIndex(s => s.email === email);
+if(existing > -1) students[existing] = student;
+else students.push(student);
+localStorage.fairhire_students = JSON.stringify(students);
+alert('Profile saved!');
+updateStats();
+}
+
+function clearStudentForm() {
+['student-name','student-email','student-phone','student-location','student-degree','student-institution','student-year','student-gpa','project-title','project-desc','project-tech'].forEach(id => document.getElementById(id).value = '');
+studentSkills = [];
+renderSkills();
+}
+
+function postJob() {
+const company = document.getElementById('job-company').value.trim();
+const title = document.getElementById('job-title').value.trim();
+if(!company || !title) { alert('Enter company and title'); return; }
+const job = {
+company, title,
+location: document.getElementById('job-location').value || 'Not specified',
+type: document.getElementById('job-type').value || 'Full-time',
+skills: [...jobSkills],
+desc: document.getElementById('job-desc').value
+};
+jobs.push(job);
+localStorage.fairhire_jobs = JSON.stringify(jobs);
+alert('Job posted!');
+updateStats();
+clearJobForm();
+}
+
+function clearJobForm() {
+['job-company','job-title','job-desc'].forEach(id => document.getElementById(id).value = '');
+document.getElementById('job-location').selectedIndex = 0;
+document.getElementById('job-type').selectedIndex = 0;
+jobSkills = [];
+renderJobSkills();
+}
+
+function renderJobSkills() {
+const container = document.getElementById('job-skills-container');
+const input = document.getElementById('job-skills-input');
+container.querySelectorAll('.tag').forEach(t => t.remove());
+jobSkills.forEach(s => {
+const tag = document.createElement('span');
+tag.className = 'tag';
+tag.innerHTML = s+'<span class="tag-remove" onclick="removeJobSkill(\''+s+'\')">×</span>';
+container.insertBefore(tag, input);
+});
+}
+
+function removeJobSkill(skill) {
+jobSkills = jobSkills.filter(s => s !== skill);
+renderJobSkills();
+}
+
+document.getElementById('job-skills-input').addEventListener('keydown', e => {
+if(e.key === 'Enter' && e.target.value.trim()) {
+jobSkills.push(e.target.value.trim());
+renderJobSkills();
+e.target.value = '';
+}
+});
+
+function updateStats() {
+document.getElementById('stat-jobs').textContent = jobs.length;
+document.getElementById('stat-candidates').textContent = students.length;
+let totalMatches = 0;
+jobs.forEach(job => {
+totalMatches += calculateMatches(job).length;
+});
+document.getElementById('stat-matches').textContent = totalMatches;
+}
+
+function calculateMatches(job) {
+return students.map(s => {
+const score = calcScore(s, job);
+return { student: s, score };
+}).sort((a,b) => b.score - a.score).filter(m => m.score > 0);
+}
+
+function calcScore(student, job) {
+let score = 0, weight = 0;
+const jobSkills = job.skills || [];
+const stuSkills = student.skills || [];
+if(jobSkills.length > 0) {
+const matched = jobSkills.filter(s => stuSkills.some(ss => ss.toLowerCase() === s.toLowerCase())).length;
+score += (matched / jobSkills.length) * 100 * 0.5;
+}
+else score += 50;
+weight += 50;
+score += (student.project ? 30 : 10);
+weight += 50;
+return score / weight * 100;
+}
+
+function updateJobSelect() {
+const select = document.getElementById('job-select');
+select.innerHTML = '<option value="">Select a job</option>';
+jobs.forEach((job, i) => {
+const opt = document.createElement('option');
+opt.value = i;
+opt.textContent = job.title + ' at ' + job.company;
+select.appendChild(opt);
+});
+}
+
+function showCandidates() {
+const jobIdx = document.getElementById('job-select').value;
+const list = document.getElementById('candidate-list');
+if(jobIdx === '') { list.innerHTML = ''; return; }
+const matches = calculateMatches(jobs[jobIdx]);
+if(matches.length === 0) {
+list.innerHTML = '<div class="empty-state"><div class="empty-title">No matches</div></div>';
+return;
+}
+list.innerHTML = matches.map((m, i) => {
+let rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'default';
+return '<div class="result-card"><div class="result-rank '+rankClass+'">#'+(i+1)+'</div><div class="result-info"><div class="result-name">'+m.student.name+'</div><div class="result-meta"><span>'+(m.student.degree||'')+'</span><span>'+(m.student.location||'')+'</span></div><div class="result-skills">'+(m.student.skills||[]).slice(0,3).map(s => '<span class="result-skill">'+s+'</span>').join('')+'</div></div><div class="result-score"><div class="score-label">Fit</div><div class="fit-score '+(m.score>=80?'high':m.score>=60?'medium':'low')+'">'+Math.round(m.score)+'%</div></div></div>';
+}).join('');
+}
+
+// Init
+showPage('home');
+updateStats();
+</script>
 </body>
 </html>
