@@ -70,6 +70,52 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
 .skill-suggestion { padding: 4px 10px; background: #fff; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; cursor: pointer; }
 .skill-suggestion:hover { border-color: var(--primary); color: var(--primary); }
 
+/* Quiz Cards */
+.quiz-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; }
+.quiz-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.quiz-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.quiz-card-title { font-size: 16px; font-weight: 700; }
+.quiz-status { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+.quiz-status.not-started { background: #fef3c7; color: #92400e; }
+.quiz-status.completed { background: #d1fae5; color: #065f46; }
+.quiz-card-desc { font-size: 14px; color: var(--text2); margin-bottom: 10px; }
+.quiz-meta { display: flex; gap: 16px; font-size: 13px; color: var(--text3); }
+
+/* Quiz Modal */
+.quiz-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 10000; display: none; overflow-y: auto; padding: 40px 20px; }
+.quiz-modal.active { display: block; }
+.quiz-modal-content { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 28px; }
+.quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.quiz-header h3 { font-size: 18px; }
+.quiz-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.quiz-progress-bar { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.quiz-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 4px; transition: 0.3s; }
+.quiz-progress-text { font-size: 14px; font-weight: 600; color: var(--text2); }
+.quiz-question { margin-bottom: 24px; }
+.quiz-qnumber { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 8px; }
+.quiz-qtext { font-size: 17px; font-weight: 600; margin-bottom: 20px; }
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-option { display: flex; align-items: center; gap: 12px; padding: 14px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: 0.2s; }
+.quiz-option:hover { border-color: var(--primary-light); }
+.quiz-option.selected { border-color: var(--primary); background: rgba(37,99,235,0.1); }
+.quiz-option-marker { width: 28px; height: 28px; border: 2px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--text3); }
+.quiz-option.selected .quiz-option-marker { border-color: var(--primary); background: var(--primary); color: #fff; }
+.quiz-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 24px; }
+
+/* Quiz Results */
+.quiz-results { text-align: center; padding: 30px; }
+.quiz-score-circle { width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px; }
+.quiz-score-value { font-family: 'Plus Jakarta Sans'; font-size: 36px; font-weight: 800; color: #fff; }
+.quiz-score-label { font-size: 12px; color: rgba(255,255,255,0.8); }
+.quiz-results h3 { margin-bottom: 8px; }
+.quiz-results p { color: var(--text2); margin-bottom: 24px; }
+.quiz-breakdown { display: flex; justify-content: center; gap: 30px; margin-bottom: 24px; }
+.quiz-breakdown-item { text-align: center; }
+.quiz-breakdown-value { font-family: 'Plus Jakarta Sans'; font-size: 24px; font-weight: 700; }
+.quiz-breakdown-value.correct { color: var(--success); }
+.quiz-breakdown-value.incorrect { color: var(--danger); }
+.quiz-breakdown-label { font-size: 13px; color: var(--text3); }
+
 /* Stats */
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
 .stat-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
@@ -237,7 +283,49 @@ FairHire
 <button class="btn btn-primary" onclick="saveStudentProfile()">Save Profile</button>
 <button class="btn btn-secondary" onclick="clearStudentForm()">Clear</button>
 </div>
+
+<div class="card" style="margin-top: 24px;">
+<h3 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>Assessments</h3>
+<p class="quiz-card-desc" style="margin-bottom: 16px;">Take assessments to boost your fit score and appear on the leaderboard</p>
+<div class="quiz-grid">
+<div class="quiz-card" onclick="startQuiz('aptitude')">
+<div class="quiz-card-header"><h4 class="quiz-card-title">Aptitude Test</h4><span class="quiz-status not-started" id="aptitude-status">Not taken</span></div>
+<p class="quiz-card-desc">Numerical ability & problem-solving</p>
+<div class="quiz-meta"><span>10 questions</span><span>10 min</span></div>
 </div>
+<div class="quiz-card" onclick="startQuiz('logical')">
+<div class="quiz-card-header"><h4 class="quiz-card-title">Logical Reasoning</h4><span class="quiz-status not-started" id="logical-status">Not taken</span></div>
+<p class="quiz-card-desc">Patterns & analytical thinking</p>
+<div class="quiz-meta"><span>10 questions</span><span>10 min</span></div>
+</div>
+<div class="quiz-card" onclick="startQuiz('communication')">
+<div class="quiz-card-header"><h4 class="quiz-card-title">Communication</h4><span class="quiz-status not-started" id="communication-status">Not taken</span></div>
+<p class="quiz-card-desc">Verbal & comprehension skills</p>
+<div class="quiz-meta"><span>10 questions</span><span>8 min</span></div>
+</div>
+<div class="quiz-card" onclick="startQuiz('technical')">
+<div class="quiz-card-header"><h4 class="quiz-card-title">Technical Skills</h4><span class="quiz-status not-started" id="technical-status">Not taken</span></div>
+<p class="quiz-card-desc">Programming & CS fundamentals</p>
+<div class="quiz-meta"><span>10 questions</span><span>10 min</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Quiz Modal -->
+<div class="quiz-modal" id="quiz-modal">
+<div class="quiz-modal-content">
+<div class="quiz-header">
+<h3 id="quiz-title">Quiz</h3>
+<button onclick="closeQuiz()" style="background:none;border:none;font-size:24px;cursor:pointer;">&times;</button>
+</div>
+<div class="quiz-progress">
+<div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-progress-fill" style="width:10%;"></div></div>
+<span class="quiz-progress-text" id="quiz-progress-text">1/10</span>
+</div>
+<div id="quiz-content"></div>
 </div>
 </div>
 
@@ -330,7 +418,7 @@ FairHire
 </div>
 <div class="about-card">
 <h3><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></span>How It Works</h3>
-<p>Our matching algorithm evaluates candidates based on skills, projects, experience, and education to calculate a fair fit score.</p>
+<p>Our matching algorithm evaluates candidates based on skills, projects, experience, and assessment scores to calculate a fair fit score.</p>
 </div>
 <div class="about-card">
 <h3><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Privacy First</h3>
@@ -345,6 +433,70 @@ FairHire
 </div>
 
 <script>
+// Quiz Data
+const quizzes = {
+aptitude: {
+title: "Aptitude Test",
+questions: [
+{q: "What is 15% of 200?", options: ["25", "30", "35", "40"], answer: 1},
+{q: "If a train travels 120km in 2 hours, what is its speed?", options: ["50 km/h", "60 km/h", "70 km/h", "80 km/h"], answer: 1},
+{q: "What is the square root of 144?", options: ["10", "11", "12", "13"], answer: 2},
+{q: "2, 6, 12, 20, 30, ? What comes next?", options: ["40", "42", "44", "46"], answer: 1},
+{q: "If a pencil costs Rs.5, how much do 10 pencils cost?", options: ["Rs.40", "Rs.45", "Rs.50", "Rs.55"], answer: 2},
+{q: "What is 25% of 400?", options: ["75", "100", "125", "150"], answer: 1},
+{q: "3, 9, 27, 81, ? What comes next?", options: ["162", "243", "324", "405"], answer: 1},
+{q: "A car covers 240km in 4 hours. What is its average speed?", options: ["50 km/h", "55 km/h", "60 km/h", "65 km/h"], answer: 2},
+{q: "What is 3/4 as a percentage?", options: ["65%", "70%", "75%", "80%"], answer: 2},
+{q: "If LOGIC = 49, what is REASON? (A=1)", options: ["52", "54", "56", "58"], answer: 1}
+]
+},
+logical: {
+title: "Logical Reasoning",
+questions: [
+{q: "Find the missing: 2, 5, 10, 17, ?", options: ["24", "26", "28", "30"], answer: 1},
+{q: "Complete: Monday, Wednesday, Friday, ?", options: ["Saturday", "Sunday", "Tuesday", "Thursday"], answer: 1},
+{q: "Find the odd one: Apple, Banana, Carrot, Mango", options: ["Apple", "Banana", "Carrot", "Mango"], answer: 2},
+{q: "Complete: 1, 1, 2, 3, 5, 8, ?", options: ["11", "13", "15", "17"], answer: 1},
+{q: "If A=1, B=2, C=3, what is D+E?", options: ["7", "8", "9", "10"], answer: 0},
+{q: "Find the pattern: 2, 4, 8, 16, ?", options: ["24", "28", "32", "36"], answer: 2},
+{q: "All roses are flowers. Some flowers fade. Therefore:", options: ["All roses fade", "Some roses may fade", "No roses fade", "Cannot be determined"], answer: 1},
+{q: "If it rains, the ground gets wet. The ground is wet. Therefore:", options: ["It rained", "It may have rained", "It never rains", "Cannot be determined"], answer: 1},
+{q: "If all cats are mammals and all mammals are animals, then:", options: ["All cats are animals", "Some cats are animals", "No cats are animals", "Cannot be determined"], answer: 0},
+{q: "Find the missing: 2, 7, 14, 23, ?", options: ["30", "32", "34", "36"], answer: 2}
+]
+},
+communication: {
+title: "Communication Skills",
+questions: [
+{q: "Choose the correct sentence:", options: ["She don't like apples", "She doesn't like apples", "She don't likes apples", "She doesn't liked apples"], answer: 1},
+{q: "\"Ephemeral\" means:", options: ["Eternal", "Short-lived", "Permanent", "Valuable"], answer: 1},
+{q: "Choose the synonyms: Happy", options: ["Sad", "Joyful", "Angry", "Tired"], answer: 1},
+{q: "Complete: \"Better late than ___\"", options: ["Ever", "Never", "Always", "Often"], answer: 1},
+{q: "Choose the antonym of \"Artificial\"", options: ["Natural", "Synthetic", "Fake", "Man-made"], answer: 0},
+{q: "\"Benevolent\" means:", options: ["Cruel", "Kind", "Angry", "Sad"], answer: 1},
+{q: "Choose the correct word: Their/There/They're going", options: ["Their", "There", "They're", "All are correct"], answer: 2},
+{q: "\"Pragmatic\" means:", options: ["Idealistic", "Practical", "Impossible", "Theoretical"], answer: 1},
+{q: "Complete: \"Time and ___ wait for no man\"", options: ["Money", "Tide", "Knowledge", "Patience"], answer: 1},
+{q: "Which is a complete sentence?", options: ["Running fast", "The dog barks", "Before the storm", "Walking to"], answer: 1}
+]
+},
+technical: {
+title: "Technical Skills",
+questions: [
+{q: "What does HTML stand for?", options: ["Hyper Text Markup", "HyperText Markup Language", "High Tech Modern Language", "Home Tool Markup Language"], answer: 1},
+{q: "Which is a JavaScript framework?", options: ["Django", "React", "Laravel", "Ruby"], answer: 1},
+{q: "What does SQL stand for?", options: ["Simple Query Language", "Structured Query Language", "Standard Query Logic", "System Query List"], answer: 1},
+{q: "Which is a Python data structure?", options: ["Array", "List", "Vector", "Stack"], answer: 1},
+{q: "What is Git used for?", options: ["Design", "Database", "Version Control", "Cloud Computing"], answer: 2},
+{q: "Which is a CSS framework?", options: ["React", "Angular", "Bootstrap", "Node"], answer: 2},
+{q: "What does API stand for?", options: ["Application Programming Interface", "Applied Program Integration", "Auto Program Interface", "App Program Item"], answer: 0},
+{q: "Which is a NoSQL database?", options: ["MySQL", "PostgreSQL", "MongoDB", "Oracle"], answer: 2},
+{q: "What is Docker?", options: ["Programming Language", "Cloud Service", "Container Platform", "Version Control"], answer: 2},
+{q: "Which HTTP method creates a resource?", options: ["GET", "PUT", "POST", "DELETE"], answer: 2}
+]
+}
+};
+
 // State
 let currentPage = 'home';
 let currentTab = 'post';
@@ -352,10 +504,14 @@ let studentSkills = [];
 let jobSkills = [];
 let jobs = [];
 let students = [];
+let quizScores = {};
+let currentQuiz = null;
+let quizAnswers = {};
 
 // Load data
 if(localStorage.fairhire_jobs) jobs = JSON.parse(localStorage.fairhire_jobs);
 if(localStorage.fairhire_students) students = JSON.parse(localStorage.fairhire_students);
+if(localStorage.fairhire_quiz_scores) quizScores = JSON.parse(localStorage.fairhire_quiz_scores);
 if(localStorage.fairhire_student) {
 const saved = JSON.parse(localStorage.fairhire_student);
 document.getElementById('student-name').value = saved.name || '';
@@ -372,10 +528,10 @@ document.getElementById('project-tech').value = saved.project?.tech || '';
 studentSkills = saved.skills || [];
 renderSkills();
 }
+updateQuizStatus();
 
 // Functions
 function showPage(page) {
-console.log('showPage:', page);
 currentPage = page;
 document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
 document.getElementById('page-'+page).classList.add('active');
@@ -383,6 +539,7 @@ document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')
 event && event.target.closest('.nav-link') && event.target.classList.add('active');
 updateStats();
 if(page === 'recruiters') updateJobSelect();
+if(page === 'students') updateQuizStatus();
 }
 
 function showTab(tab) {
@@ -525,12 +682,24 @@ const jobSkills = job.skills || [];
 const stuSkills = student.skills || [];
 if(jobSkills.length > 0) {
 const matched = jobSkills.filter(s => stuSkills.some(ss => ss.toLowerCase() === s.toLowerCase())).length;
-score += (matched / jobSkills.length) * 100 * 0.5;
+score += (matched / jobSkills.length) * 100 * 0.4;
 }
-else score += 50;
-weight += 50;
-score += (student.project ? 30 : 10);
-weight += 50;
+else score += 40;
+weight += 40;
+score += (student.project ? 25 : 10);
+weight += 25;
+score += 15;
+weight += 20;
+// Add quiz score (15%)
+const email = student.email;
+const scores = quizScores[email] || {};
+const qKeys = Object.keys(scores);
+if(qKeys.length > 0) {
+let qSum = 0;
+qKeys.forEach(k => qSum += scores[k]);
+score += (qSum / qKeys.length) * 0.15;
+}
+weight += 20;
 return score / weight * 100;
 }
 
@@ -558,6 +727,103 @@ list.innerHTML = matches.map((m, i) => {
 let rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'default';
 return '<div class="result-card"><div class="result-rank '+rankClass+'">#'+(i+1)+'</div><div class="result-info"><div class="result-name">'+m.student.name+'</div><div class="result-meta"><span>'+(m.student.degree||'')+'</span><span>'+(m.student.location||'')+'</span></div><div class="result-skills">'+(m.student.skills||[]).slice(0,3).map(s => '<span class="result-skill">'+s+'</span>').join('')+'</div></div><div class="result-score"><div class="score-label">Fit</div><div class="fit-score '+(m.score>=80?'high':m.score>=60?'medium':'low')+'">'+Math.round(m.score)+'%</div></div></div>';
 }).join('');
+}
+
+// Quiz Functions
+function updateQuizStatus() {
+Object.keys(quizzes).forEach(id => {
+const status = document.getElementById(id + '-status');
+if(!status) return;
+const email = localStorage.fairhire_student ? JSON.parse(localStorage.fairhire_student).email : null;
+const scores = quizScores[email] || {};
+if(scores[id] !== undefined) {
+status.textContent = scores[id] + '%';
+status.className = 'quiz-status completed';
+} else {
+status.textContent = 'Not taken';
+status.className = 'quiz-status not-started';
+}
+});
+}
+
+function startQuiz(quizId) {
+const email = localStorage.fairhire_student ? JSON.parse(localStorage.fairhire_student).email : null;
+if(!email) { alert('Please save your profile first!'); return; }
+currentQuiz = quizId;
+quizAnswers = {};
+renderQuizQuestion(0);
+document.getElementById('quiz-modal').classList.add('active');
+}
+
+function renderQuizQuestion(qIndex) {
+const quiz = quizzes[currentQuiz];
+const q = quiz.questions[qIndex];
+const total = quiz.questions.length;
+document.getElementById('quiz-title').textContent = quiz.title;
+document.getElementById('quiz-progress-fill').style.width = ((qIndex + 1) / total * 100) + '%';
+document.getElementById('quiz-progress-text').textContent = (qIndex + 1) + '/' + total;
+document.getElementById('quiz-content').innerHTML = `
+<div class="quiz-question">
+<div class="quiz-qnumber">Question ${qIndex + 1}</div>
+<div class="quiz-qtext">${q.q}</div>
+<div class="quiz-options">
+${q.options.map((opt, i) => `
+<div class="quiz-option ${quizAnswers[qIndex] === i ? 'selected' : ''}" onclick="selectQuizAnswer(${qIndex}, ${i})">
+<div class="quiz-option-marker">${String.fromCharCode(65 + i)}</div>
+<div>${opt}</div>
+</div>
+`).join('')}
+</div>
+</div>
+<div class="quiz-nav">
+<button class="btn btn-secondary" onclick="closeQuiz()">Exit Quiz</button>
+${qIndex > 0 ? '<button class="btn btn-secondary" onclick="renderQuizQuestion(' + (qIndex - 1) + ')">Previous</button>' : ''}
+${qIndex < total - 1 ? '<button class="btn btn-primary" onclick="renderQuizQuestion(' + (qIndex + 1) + ')">Next</button>' : '<button class="btn btn-primary" onclick="submitQuiz()">Submit Quiz</button>'}
+</div>
+`;
+}
+
+function selectQuizAnswer(qIndex, answerIndex) {
+quizAnswers[qIndex] = answerIndex;
+const options = document.querySelectorAll('.quiz-option');
+options.forEach((opt, i) => {
+opt.classList.toggle('selected', i === answerIndex);
+});
+}
+
+function closeQuiz() {
+document.getElementById('quiz-modal').classList.remove('active');
+currentQuiz = null;
+}
+
+function submitQuiz() {
+const quiz = quizzes[currentQuiz];
+const email = JSON.parse(localStorage.fairhire_student).email;
+let correct = 0;
+quiz.questions.forEach((q, i) => {
+if(quizAnswers[i] === q.answer) correct++;
+});
+const score = Math.round((correct / quiz.questions.length) * 100);
+if(!quizScores[email]) quizScores[email] = {};
+quizScores[email][currentQuiz] = score;
+localStorage.fairhire_quiz_scores = JSON.stringify(quizScores);
+document.getElementById('quiz-content').innerHTML = `
+<div class="quiz-results">
+<div class="quiz-score-circle">
+<div class="quiz-score-value">${score}%</div>
+<div class="quiz-score-label">Score</div>
+</div>
+<h3>${quiz.title}</h3>
+<p>${score >= 80 ? 'Excellent!' : score >= 60 ? 'Good job!' : 'Keep practicing!'}</p>
+<div class="quiz-breakdown">
+<div class="quiz-breakdown-item"><div class="quiz-breakdown-value correct">${correct}</div><div class="quiz-breakdown-label">Correct</div></div>
+<div class="quiz-breakdown-item"><div class="quiz-breakdown-value incorrect">${quiz.questions.length - correct}</div><div class="quiz-breakdown-label">Incorrect</div></div>
+</div>
+<button class="btn btn-primary" onclick="closeQuiz()">Done</button>
+</div>
+`;
+updateQuizStatus();
+updateStats();
 }
 
 // Init
