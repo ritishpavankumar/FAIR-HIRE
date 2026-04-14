@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FairHire - Smart Candidate Matching</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg: #0F0F0F;
+      --surface: #1A1A1A;
+      --surface-elevated: #242424;
+      --primary: #6366F1;
+      --primary-hover: #818CF8;
+      --accent: #22D3EE;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --text-primary: #FAFAFA;
+      --text-secondary: #A1A1AA;
+      --text-muted: #71717A;
+      --border: #2E2E2E;
+      --border-focus: #3E3E3E;
+    }
+    
+    html { font-size: 15px; }
+    
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+    
+    .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+    
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(15, 15, 15, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+    }
+    
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    
+    .logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    /* Role Toggle */
+    .role-toggle {
+      display: flex;
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 4px;
+      gap: 4px;
+    }
+    
+    .role-btn {
+      padding: 8px 20px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .role-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+    
+    .role-btn:not(.active):hover { color: var(--text-primary); }
+    
+    /* Main Content */
+    main { padding-top: 96px; padding-bottom: 60px; }
+    
+    .page-title {
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .page-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+    
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .card-title-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--surface-elevated);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    
+    /* Form Elements */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    
+    .form-group { margin-bottom: 16px; }
+    
+    .form-group.full { grid-column: 1 / -1; }
+    
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      height: 48px;
+      padding: 0 16px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-focus);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      transition: all 0.2s ease;
+    }
+    
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+    
+    textarea {
+      height: 120px;
+      padding: 12px 16px;
+      resize: vertical;
+    }
+    
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+    }
+    
+    /* Buttons */
+    .btn {
+      height: 48px;
+      padding: 0 24px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover { background: var(--primary-hover); }
+    
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-focus);
+      color: var(--text-secondary);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--surface-elevated);
+      color: var(--text-primary);
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    
+    /* Tags */
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-focus);
+      border-radius: 8px;
+      min-height: 48px;
+    }
+    
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border-focus);
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+    
+    .tag-remove {
+      width: 16px;
+      height: 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      line-height: 1;
+    }
+    
+    .tag-remove:hover { color: var(--warning); }
+    
+    .tag-input {
+      flex: 1;
+      min-width: 120px;
+      height: 32px;
+      padding: 0 8px;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+    }
+    
+    .tag-input:focus { outline: none; }
+    
+    /* Skill Suggestions */
+    .skill-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    
+    .skill-suggestion {
+      padding: 4px 10px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .skill-suggestion:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    
+    /* Match Score Badge */
+    .match-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 56px;
+      height: 28px;
+      padding: 0 10px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .match-badge.high { background: linear-gradient(135deg, #10B981, #34D399); }
+    .match-badge.medium { background: linear-gradient(135deg, #F59E0B, #FBBF24); }
+    .match-badge.low { background: linear-gradient(135deg, #71717A, #A1A1AA); }
+    
+    /* Candidate Cards */
+    .candidate-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.2s ease;
+    }
+    
+    .candidate-card:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
+    }
+    
+    .candidate-rank {
+      width: 40px;
+      height: 40px;
+      background: var(--surface-elevated);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    
+    .candidate-rank.gold { background: linear-gradient(135deg, #F59E0B, #FBBF24); color: #0F0F0F; }
+    .candidate-rank.silver { background: linear-gradient(135deg, #9CA3AF, #D1D5DB); color: #0F0F0F; }
+    .candidate-rank.bronze { background: linear-gradient(135deg, #CD7F32, #DA8A67); color: #0F0F0F; }
+    
+    .candidate-info { flex: 1; }
+    
+    .candidate-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .candidate-meta {
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .candidate-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    
+    .candidate-skill {
+      padding: 4px 8px;
+      background: var(--surface-elevated);
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .candidate-score {
+      text-align: right;
+    }
+    
+    .score-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    
+    /* Profile Summary */
+    .profile-summary {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: white;
+      flex-shrink: 0;
+    }
+    
+    .profile-details { flex: 1; }
+    
+    .profile-name {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .profile-email {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    
+    .profile-section {
+      margin-bottom: 16px;
+    }
+    
+    .profile-section-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    
+    .profile-value {
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+    
+    /* Job Card */
+    .job-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+    
+    .job-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    
+    .job-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .job-company {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    .job-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    .job-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .job-description {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--surface);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 20px;
+    }
+    
+    .empty-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .empty-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .tab.active {
+      background: var(--surface-elevated);
+      color: var(--text-primary);
+    }
+    
+    .tab:not(.active):hover { color: var(--text-primary); }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in { animation: fadeIn 0.3s ease; }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      
+      .role-toggle { 
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 64px;
+      }
+      
+      main { padding-top: 120px; }
+      
+      .candidate-card { flex-direction: column; align-items: flex-start; }
+      .candidate-score { text-align: left; margin-top: 12px; }
+      
+      .stats-grid { grid-template-columns: 1fr; }
+      
+      .profile-summary { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">
+        <div class="logo-icon">F</div>
+        FairHire
+      </div>
+      <div class="role-toggle">
+        <button class="role-btn active" data-role="student">Student</button>
+        <button class="role-btn" data-role="recruiter">Recruiter</button>
+      </div>
+      <div></div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <!-- Student View -->
+      <div id="student-view">
+        <h1 class="page-title">Student Profile</h1>
+        <p class="page-subtitle">Build your profile to get matched with opportunities</p>
+        
+        <div id="student-form-container">
+          <div class="card">
+            <h3 class="card-title">
+              <span class="card-title-icon">1</span>
+              Personal Information
+            </h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="student-name" placeholder="John Doe">
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="student-email" placeholder="john@example.com">
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" id="student-phone" placeholder="+1 (555) 000-0000">
+              </div>
+              <div class="form-group">
+                <label>Location</label>
+                <input type="text" id="student-location" placeholder="San Francisco, CA">
+              </div>
+              <div class="form-group">
+                <label>Profile URL</label>
+                <input type="url" id="student-profile-url" placeholder="https://github.com/johndoe">
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h3 class="card-title">
+              <span class="card-title-icon">2</span>
+              Education
+            </h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Degree</label>
+                <input type="text" id="student-degree" placeholder="Computer Science">
+              </div>
+              <div class="form-group">
+                <label>Institution</label>
+                <input type="text" id="student-institution" placeholder="Stanford University">
+              </div>
+              <div class="form-group">
+                <label>Graduation Year</label>
+                <input type="number" id="student-grad-year" placeholder="2024">
+              </div>
+              <div class="form-group">
+                <label>GPA (optional)</label>
+                <input type="number" id="student-gpa" placeholder="3.8" step="0.1" min="0" max="4">
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h3 class="card-title">
+              <span class="card-title-icon">3</span>
+              Skills
+            </h3>
+            <div class="form-group">
+              <label>Your Skills</label>
+              <div class="tags-container" id="student-skills-container">
+                <input type="text" class="tag-input" id="student-skills-input" placeholder="Type a skill and press Enter">
+              </div>
+              <div class="skill-suggestions">
+                <span class="skill-suggestion" data-skill="JavaScript">JavaScript</span>
+                <span class="skill-suggestion" data-skill="React">React</span>
+                <span class="skill-suggestion" data-skill="Python">Python</span>
+                <span class="skill-suggestion" data-skill="Node.js">Node.js</span>
+                <span class="skill-suggestion" data-skill="TypeScript">TypeScript</span>
+                <span class="skill-suggestion" data-skill="SQL">SQL</span>
+                <span class="skill-suggestion" data-skill="Java">Java</span>
+                <span class="skill-suggestion" data-skill="AWS">AWS</span>
+                <span class="skill-suggestion" data-skill="Docker">Docker</span>
+                <span class="skill-suggestion" data-skill="Git">Git</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h3 class="card-title">
+              <span class="card-title-icon">4</span>
+              Projects
+            </h3>
+            <div id="student-projects">
+              <div class="form-group">
+                <label>Project Title</label>
+                <input type="text" class="project-title" placeholder="E-commerce Platform">
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <textarea class="project-description" placeholder="Built a full-stack e-commerce platform with React and Node.js..."></textarea>
+              </div>
+              <div class="form-group">
+                <label>Technologies Used</label>
+                <input type="text" class="project-tech" placeholder="React, Node.js, MongoDB, Stripe">
+              </div>
+              <div class="form-group">
+                <label>Project Link (optional)</label>
+                <input type="url" class="project-link" placeholder="https://github.com/johndoe/project">
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h3 class="card-title">
+              <span class="card-title-icon">5</span>
+              Experience
+            </h3>
+            <div id="student-experience">
+              <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" class="exp-title" placeholder="Software Engineering Intern">
+              </div>
+              <div class="form-group">
+                <label>Company</label>
+                <input type="text" class="exp-company" placeholder="Tech Corp">
+              </div>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Duration (months)</label>
+                  <input type="number" class="exp-duration" placeholder="6">
+                </div>
+                <div class="form-group">
+                  <label>Description</label>
+                  <input type="text" class="exp-description" placeholder="Worked on API development...">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="btn-group">
+            <button class="btn btn-primary" id="save-student-profile">Save Profile</button>
+            <button class="btn btn-secondary" id="clear-student-form">Clear</button>
+          </div>
+        </div>
+        
+        <div id="student-profile-display" style="display: none;">
+          <div class="card">
+            <div class="profile-summary">
+              <div class="profile-avatar" id="profile-avatar">JD</div>
+              <div class="profile-details">
+                <div class="profile-name" id="display-name">John Doe</div>
+                <div class="profile-email" id="display-email">john@example.com</div>
+                
+                <div class="profile-section">
+                  <div class="profile-section-title">Location</div>
+                  <div class="profile-value" id="display-location">San Francisco, CA</div>
+                </div>
+                
+                <div class="profile-section">
+                  <div class="profile-section-title">Education</div>
+                  <div class="profile-value" id="display-education">Computer Science at Stanford University, 2024</div>
+                </div>
+                
+                <div class="profile-section">
+                  <div class="profile-section-title">Skills</div>
+                  <div class="candidate-skills" id="display-skills"></div>
+                </div>
+                
+                <div class="profile-section">
+                  <div class="profile-section-title">Projects</div>
+                  <div id="display-projects"></div>
+                </div>
+                
+                <div class="profile-section">
+                  <div class="profile-section-title">Experience</div>
+                  <div id="display-experience"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="btn-group">
+            <button class="btn btn-primary" id="edit-profile">Edit Profile</button>
+          </div>
+        </div>
+        
+        <div id="job-matches" style="display: none;">
+          <h2 class="page-title" style="margin-top: 32px;">Matched Jobs</h2>
+          <p class="page-subtitle">Jobs ranked by your fit score</p>
+          <div id="job-matches-list"></div>
+        </div>
+      </div>
+      
+      <!-- Recruiter View -->
+      <div id="recruiter-view" style="display: none;">
+        <h1 class="page-title">Recruiter Dashboard</h1>
+        <p class="page-subtitle">Post jobs and find the best candidates</p>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-jobs">0</div>
+            <div class="stat-label">Active Jobs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-candidates">0</div>
+            <div class="stat-label">Total Candidates</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-matches">0</div>
+            <div class="stat-label">Matches</div>
+          </div>
+        </div>
+        
+        <div class="tabs">
+          <button class="tab active" data-tab="post">Post Job</button>
+          <button class="tab" data-tab="candidates">Find Candidates</button>
+        </div>
+        
+        <!-- Job Posting -->
+        <div id="tab-post">
+          <div class="card">
+            <h3 class="card-title">
+              <span class="card-title-icon">+</span>
+              Post a New Job
+            </h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Company Name</label>
+                <input type="text" id="job-company" placeholder="TechCorp Inc.">
+              </div>
+              <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" id="job-title" placeholder="Software Engineer">
+              </div>
+              <div class="form-group">
+                <label>Location</label>
+                <select id="job-location">
+                  <option value="">Select location type</option>
+                  <option value="Remote">Remote</option>
+                  <option value="Hybrid">Hybrid</option>
+                  <option value="On-site">On-site</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Job Type</label>
+                <select id="job-type">
+                  <option value="">Select job type</option>
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Internship">Internship</option>
+                  <option value="Contract">Contract</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Experience Level</label>
+                <select id="job-experience">
+                  <option value="">Select level</option>
+                  <option value="Entry">Entry Level</option>
+                  <option value="Mid">Mid Level</option>
+                  <option value="Senior">Senior</option>
+                  <option value="Lead">Lead</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Salary Range (optional)</label>
+                <input type="text" id="job-salary" placeholder="$80k - $120k">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Required Skills</label>
+              <div class="tags-container" id="job-required-skills-container">
+                <input type="text" class="tag-input" id="job-required-skills-input" placeholder="Type a skill and press Enter">
+              </div>
+              <div class="skill-suggestions">
+                <span class="skill-suggestion" data-skill="JavaScript">JavaScript</span>
+                <span class="skill-suggestion" data-skill="React">React</span>
+                <span class="skill-suggestion" data-skill="Python">Python</span>
+                <span class="skill-suggestion" data-skill="Node.js">Node.js</span>
+                <span class="skill-suggestion" data-skill="TypeScript">TypeScript</span>
+                <span class="skill-suggestion" data-skill="SQL">SQL</span>
+                <span class="skill-suggestion" data-skill="Java">Java</span>
+                <span class="skill-suggestion" data-skill="AWS">AWS</span>
+                <span class="skill-suggestion" data-skill="Docker">Docker</span>
+                <span class="skill-suggestion" data-skill="Git">Git</span>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Preferred Skills</label>
+              <div class="tags-container" id="job-preferred-skills-container">
+                <input type="text" class="tag-input" id="job-preferred-skills-input" placeholder="Type a skill and press Enter">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Job Description</label>
+              <textarea id="job-description" placeholder="We are looking for a skilled software engineer to join our team..."></textarea>
+            </div>
+            
+            <div class="btn-group">
+              <button class="btn btn-primary" id="post-job">Post Job</button>
+              <button class="btn btn-secondary" id="clear-job-form">Clear</button>
+            </div>
+          </div>
+          
+          <div id="posted-jobs">
+            <h3 class="card-title" style="margin-top: 32px;">Your Posted Jobs</h3>
+            <div id="jobs-list"></div>
+          </div>
+        </div>
+        
+        <!-- Candidates -->
+        <div id="tab-candidates" style="display: none;">
+          <select id="select-job" style="margin-bottom: 24px;">
+            <option value="">Select a job to see matches</option>
+          </select>
+          
+          <div id="candidate-matches">
+            <div class="empty-state">
+              <div class="empty-icon">&#128269;</div>
+              <div class="empty-title">No candidates yet</div>
+              <div class="empty-subtitle">Post a job to start receiving matches</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ========== STATE ==========
+    const state = {
+      role: 'student',
+      currentTab: 'post',
+      student: null,
+      jobs: [],
+      students: []
+    };
+    
+    // ========== STUDENT DATA ==========
+    const studentSkills = [];
+    const studentProjects = [];
+    const studentExperience = [];
+    
+    // ========== INIT ==========
+    function init() {
+      loadFromStorage();
+      setupEventListeners();
+      render();
+    }
+    
+    function loadFromStorage() {
+      const savedStudent = localStorage.getItem('fairhire_student');
+      const savedJobs = localStorage.getItem('fairhire_jobs');
+      const savedStudents = localStorage.getItem('fairhire_students');
+      
+      if (savedStudent) {
+        state.student = JSON.parse(savedStudent);
+      }
+      if (savedJobs) {
+        state.jobs = JSON.parse(savedJobs);
+      }
+      if (savedStudents) {
+        state.students = JSON.parse(savedStudents);
+      }
+    }
+    
+    function saveToStorage() {
+      if (state.student) {
+        localStorage.setItem('fairhire_student', JSON.stringify(state.student));
+      }
+      localStorage.setItem('fairhire_jobs', JSON.stringify(state.jobs));
+      localStorage.setItem('fairhire_students', JSON.stringify(state.students));
+    }
+    
+    // ========== EVENT LISTENERS ==========
+    function setupEventListeners() {
+      // Role toggle
+      document.querySelectorAll('.role-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          state.role = btn.dataset.role;
+          render();
+        });
+      });
+      
+      // Tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          state.currentTab = tab.dataset.tab;
+          render();
+        });
+      });
+      
+      // Student skills input
+      setupTagInput('student-skills', studentSkills);
+      setupTagInput('job-required-skills', []);
+      setupTagInput('job-preferred-skills', []);
+      
+      // Skill suggestions
+      document.querySelectorAll('.skill-suggestion').forEach(s => {
+        s.addEventListener('click', () => {
+          const skill = s.dataset.skill;
+          const container = s.closest('.card').querySelector('.tags-container');
+          const input = container.querySelector('.tag-input');
+          if (container.id.includes('student')) {
+            if (!studentSkills.includes(skill)) {
+              studentSkills.push(skill);
+              renderStudentSkills();
+            }
+          } else if (container.id.includes('required')) {
+            if (!window.jobRequiredSkills) window.jobRequiredSkills = [];
+            if (!window.jobRequiredSkills.includes(skill)) {
+              window.jobRequiredSkills.push(skill);
+              renderJobSkills('required');
+            }
+          } else if (container.id.includes('preferred')) {
+            if (!window.jobPreferredSkills) window.jobPreferredSkills = [];
+            if (!window.jobPreferredSkills.includes(skill)) {
+              window.jobPreferredSkills.push(skill);
+              renderJobSkills('preferred');
+            }
+          }
+        });
+      });
+      
+      // Save student profile
+      document.getElementById('save-student-profile').addEventListener('click', saveStudentProfile);
+      document.getElementById('clear-student-form').addEventListener('click', clearStudentForm);
+      document.getElementById('edit-profile').addEventListener('click', () => {
+        document.getElementById('student-form-container').style.display = 'block';
+        document.getElementById('student-profile-display').style.display = 'none';
+      });
+      
+      // Post job
+      document.getElementById('post-job').addEventListener('click', postJob);
+      document.getElementById('clear-job-form').addEventListener('click', clearJobForm);
+      
+      // Select job
+      document.getElementById('select-job').addEventListener('change', (e) => {
+        renderCandidatesForJob(e.target.value);
+      });
+    }
+    
+    function setupTagInput(type, array) {
+      const input = document.getElementById(`${type}-input`);
+      const container = document.getElementById(`${type}-container`);
+      
+      if (!input || !container) return;
+      
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && input.value.trim()) {
+          e.preventDefault();
+          const skill = input.value.trim();
+          if (!array.includes(skill)) {
+            array.push(skill);
+            renderTagInput(type, array);
+          }
+          input.value = '';
+        }
+      });
+    }
+    
+    function renderTagInput(type, array) {
+      const container = document.getElementById(`${type}-container`);
+      const input = container.querySelector('.tag-input');
+      
+      // Clear existing tags
+      container.querySelectorAll('.tag').forEach(t => t.remove());
+      
+      // Add tags before input
+      array.forEach(skill => {
+        const tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.innerHTML = `${skill}<button class="tag-remove" data-skill="${skill}">&times;</button>`;
+        container.insertBefore(tag, input);
+      });
+      
+      // Update remove buttons
+      container.querySelectorAll('.tag-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const skill = btn.dataset.skill;
+          const idx = array.indexOf(skill);
+          if (idx > -1) array.splice(idx, 1);
+          renderTagInput(type, array);
+        });
+      });
+    }
+    
+    // ========== RENDER ==========
+    function render() {
+      if (state.role === 'student') {
+        document.getElementById('student-view').style.display = 'block';
+        document.getElementById('recruiter-view').style.display = 'none';
+        renderStudentView();
+      } else {
+        document.getElementById('student-view').style.display = 'none';
+        document.getElementById('recruiter-view').style.display = 'block';
+        renderRecruiterView();
+      }
+    }
+    
+    function renderStudentView() {
+      if (state.student) {
+        document.getElementById('student-form-container').style.display = 'none';
+        document.getElementById('student-profile-display').style.display = 'block';
+        document.getElementById('job-matches').style.display = 'block';
+        
+        // Avatar
+        const initials = state.student.name.split(' ').map(n => n[0]).join('').toUpperCase();
+        document.getElementById('profile-avatar').textContent = initials;
+        
+        // Details
+        document.getElementById('display-name').textContent = state.student.name;
+        document.getElementById('display-email').textContent = state.student.email;
+        document.getElementById('display-location').textContent = state.student.location || 'Not specified';
+        
+        // Education
+        let edu = state.student.degree;
+        if (state.student.institution) edu += ` at ${state.student.institution}`;
+        if (state.student.gradYear) edu += `, ${state.student.gradYear}`;
+        document.getElementById('display-education').textContent = edu;
+        
+        // Skills
+        const skillsHtml = (state.student.skills || []).map(s => `<span class="candidate-skill">${s}</span>`).join('');
+        document.getElementById('display-skills').innerHTML = skillsHtml;
+        
+        // Projects
+        const projHtml = (state.student.projects || []).map(p => `
+          <div class="profile-section">
+            <div class="profile-value" style="font-weight: 500;">${p.title}</div>
+            <div class="profile-value" style="color: var(--text-secondary); font-size: 13px;">${p.description}</div>
+            <div class="candidate-skills" style="margin-top: 6px;">
+              ${(p.tech || '').split(',').map(t => `<span class="candidate-skill">${t.trim()}</span>`).join('')}
+            </div>
+          </div>
+        `).join('');
+        document.getElementById('display-projects').innerHTML = projHtml || 'No projects added';
+        
+        // Experience
+        const expHtml = (state.student.experience || []).map(e => `
+          <div class="profile-section">
+            <div class="profile-value" style="font-weight: 500;">${e.title}</div>
+            <div class="profile-value" style="color: var(--text-secondary); font-size: 13px;">${e.company} - ${e.duration} months</div>
+          </div>
+        `).join('');
+        document.getElementById('display-experience').innerHTML = expHtml || 'No experience added';
+        
+        // Job matches
+        renderJobMatches();
+      } else {
+        document.getElementById('student-form-container').style.display = 'block';
+        document.getElementById('student-profile-display').style.display = 'none';
+        document.getElementById('job-matches').style.display = 'none';
+      }
+    }
+    
+    function renderStudentSkills() {
+      renderTagInput('student-skills', studentSkills);
+    }
+    
+    function renderRecruiterView() {
+      document.getElementById('tab-post').style.display = state.currentTab === 'post' ? 'block' : 'none';
+      document.getElementById('tab-candidates').style.display = state.currentTab === 'candidates' ? 'block' : 'none';
+      
+      // Stats
+      document.getElementById('stat-jobs').textContent = state.jobs.length;
+      document.getElementById('stat-candidates').textContent = state.students.length;
+      
+      let totalMatches = 0;
+      state.jobs.forEach(job => {
+        const matches = calculateMatches(job);
+        totalMatches += matches.length;
+      });
+      document.getElementById('stat-matches').textContent = totalMatches;
+      
+      // Jobs list
+      renderJobsList();
+      
+      // Job select
+      const select = document.getElementById('select-job');
+      select.innerHTML = '<option value="">Select a job to see matches</option>';
+      state.jobs.forEach((job, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = `${job.title} at ${job.company}`;
+        select.appendChild(opt);
+      });
+    }
+    
+    function renderJobsList() {
+      const list = document.getElementById('jobs-list');
+      if (state.jobs.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">&#128188;</div>
+            <div class="empty-title">No jobs posted</div>
+            <div class="empty-subtitle">Post your first job to find candidates</div>
+          </div>
+        `;
+        return;
+      }
+      
+      list.innerHTML = state.jobs.map((job, idx) => `
+        <div class="job-card fade-in">
+          <div class="job-header">
+            <div>
+              <div class="job-title">${job.title}</div>
+              <div class="job-company">${job.company}</div>
+            </div>
+            <button class="btn btn-secondary" onclick="deleteJob(${idx})">Delete</button>
+          </div>
+          <div class="job-meta">
+            <span class="job-meta-item">&#128205; ${job.location}</span>
+            <span class="job-meta-item">&#128188; ${job.type}</span>
+            <span class="job-meta-item">&#127919; ${job.experience}</span>
+          </div>
+          <div class="candidate-skills">
+            ${(job.requiredSkills || []).map(s => `<span class="candidate-skill">${s}</span>`).join('')}
+          </div>
+          <div class="job-description">${job.description}</div>
+        </div>
+      `).join('');
+    }
+    
+    function renderCandidatesForJob(jobIdx) {
+      const container = document.getElementById('candidate-matches');
+      
+      if (jobIdx === '' || state.students.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">&#128269;</div>
+            <div class="empty-title">No candidates yet</div>
+            <div class="empty-subtitle">${state.jobs.length === 0 ? 'Post a job to start receiving matches' : 'Students will appear here when they create profiles'}</div>
+          </div>
+        `;
+        return;
+      }
+      
+      const job = state.jobs[jobIdx];
+      const matches = calculateMatches(job);
+      
+      if (matches.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">&#128269;</div>
+            <div class="empty-title">No matches found</div>
+            <div class="empty-subtitle">Try adjusting your required skills</div>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = matches.map((match, idx) => {
+        const student = match.student;
+        let rankClass = '';
+        if (idx === 0) rankClass = 'gold';
+        else if (idx === 1) rankClass = 'silver';
+        else if (idx === 2) rankClass = 'bronze';
+        
+        return `
+          <div class="candidate-card fade-in">
+            <div class="candidate-rank ${rankClass}">#${idx + 1}</div>
+            <div class="candidate-info">
+              <div class="candidate-name">${student.name}</div>
+              <div class="candidate-meta">
+                <span>&#127891; ${student.degree || 'N/A'}</span>
+                <span>&#127968; ${student.location || 'N/A'}</span>
+                <span>&#128188; ${student.experience?.length || 0} exp</span>
+              </div>
+              <div class="candidate-skills">
+                ${(student.skills || []).slice(0, 4).map(s => `<span class="candidate-skill">${s}</span>`).join('')}
+              </div>
+            </div>
+            <div class="candidate-score">
+              <div class="score-label">Fit Score</div>
+              <div class="match-badge ${match.score >= 80 ? 'high' : match.score >= 60 ? 'medium' : 'low'}">${Math.round(match.score)}%</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function renderJobMatches() {
+      const list = document.getElementById('job-matches-list');
+      
+      if (state.jobs.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">&#128278;</div>
+            <div class="empty-title">No jobs available</div>
+            <div class="empty-subtitle">Check back later for new opportunities</div>
+          </div>
+        `;
+        return;
+      }
+      
+      let allMatches = [];
+      state.jobs.forEach(job => {
+        const matches = calculateMatches(state.student);
+        matches.forEach(m => {
+          m.job = job;
+        });
+        allMatches = allMatches.concat(matches);
+      });
+      
+      // Sort by score and dedupe
+      allMatches.sort((a, b) => b.score - a.score);
+      allMatches = allMatches.slice(0, 10);
+      
+      if (allMatches.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">&#128269;</div>
+            <div class="empty-title">No matches found</div>
+            <div class="empty-subtitle">Update your skills to get better matches</div>
+          </div>
+        `;
+        return;
+      }
+      
+      list.innerHTML = allMatches.map((match, idx) => {
+        const job = match.job;
+        let rankClass = '';
+        if (idx === 0) rankClass = 'gold';
+        else if (idx === 1) rankClass = 'silver';
+        else if (idx === 2) rankClass = 'bronze';
+        
+        return `
+          <div class="candidate-card fade-in">
+            <div class="candidate-rank ${rankClass}">#${idx + 1}</div>
+            <div class="candidate-info">
+              <div class="candidate-name">${job.title}</div>
+              <div class="candidate-meta">
+                <span>&#127970; ${job.company}</span>
+                <span>&#128205; ${job.location}</span>
+                <span>&#128188; ${job.type}</span>
+              </div>
+              <div class="candidate-skills">
+                ${(job.requiredSkills || []).slice(0, 4).map(s => `<span class="candidate-skill">${s}</span>`).join('')}
+              </div>
+            </div>
+            <div class="candidate-score">
+              <div class="score-label">Fit Score</div>
+              <div class="match-badge ${match.score >= 80 ? 'high' : match.score >= 60 ? 'medium' : 'low'}">${Math.round(match.score)}%</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // ========== MATCHING ALGORITHM ==========
+    function calculateMatches(jobOrStudent) {
+      const isJob = jobOrStudent.requiredSkills !== undefined;
+      
+      return state.students.map(student => {
+        const score = calculateFitScore(student, jobOrStudent);
+        return { student, score };
+      }).filter(m => m.score > 0).sort((a, b) => b.score - a.score);
+    }
+    
+    function calculateFitScore(student, job) {
+      let score = 0;
+      let weight = 0;
+      
+      // 1. Skill Match (40%)
+      const requiredSkills = job.requiredSkills || [];
+      const studentSkills = student.skills || [];
+      
+      if (requiredSkills.length > 0) {
+        const matchedRequired = requiredSkills.filter(s => 
+          studentSkills.some(ss => ss.toLowerCase() === s.toLowerCase())
+        ).length;
+        const requiredScore = (matchedRequired / requiredSkills.length) * 100;
+        
+        const preferredSkills = job.preferredSkills || [];
+        if (preferredSkills.length > 0) {
+          const matchedPreferred = preferredSkills.filter(s => 
+            studentSkills.some(ss => ss.toLowerCase() === s.toLowerCase())
+          ).length;
+          const preferredBonus = (matchedPreferred / preferredSkills.length) * 20;
+          score += (requiredScore * 0.4) + (Math.min(preferredBonus, 20));
+        } else {
+          score += requiredScore * 0.4;
+        }
+      } else {
+        score += 40;
+      }
+      weight += 40;
+      
+      // 2. Experience Match (25%)
+      const expLevel = { 'Entry': 1, 'Mid': 2, 'Senior': 3, 'Lead': 4 };
+      const jobExp = expLevel[job.experience] || 2;
+      const studentExp = (student.experience || []).length;
+      
+      if (studentExp >= jobExp) {
+        score += 25;
+      } else if (studentExp > 0) {
+        score += (studentExp / jobExp) * 25;
+      }
+      weight += 25;
+      
+      // 3. Project Relevance (20%)
+      const studentProjects = student.projects || [];
+      const allProjectTech = new Set();
+      studentProjects.forEach(p => {
+        if (p.tech) {
+          p.tech.split(',').forEach(t => allProjectTech.add(t.trim().toLowerCase()));
+        }
+      });
+      
+      const jobSkills = [...(job.requiredSkills || []), ...(job.preferredSkills || [])];
+      if (jobSkills.length > 0 && allProjectTech.size > 0) {
+        const matchedTech = jobSkills.filter(s => 
+          allProjectTech.has(s.toLowerCase())
+        ).length;
+        score += (matchedTech / jobSkills.length) * 20;
+      } else {
+        score += 10;
+      }
+      weight += 20;
+      
+      // 4. Education (15%)
+      if (student.degree && student.degree.toLowerCase().includes('computer')) {
+        score += 10;
+      } else if (student.degree) {
+        score += 5;
+      }
+      
+      if (student.gpa) {
+        if (student.gpa >= 3.5) score += 5;
+        else if (student.gpa >= 3.0) score += 3;
+      }
+      weight += 15;
+      
+      return (score / weight) * 100;
+    }
+    
+    // ========== ACTIONS ==========
+    function saveStudentProfile() {
+      const name = document.getElementById('student-name').value.trim();
+      const email = document.getElementById('student-email').value.trim();
+      
+      if (!name || !email) {
+        alert('Please fill in your name and email');
+        return;
+      }
+      
+      const projects = [];
+      const projTitle = document.querySelector('.project-title')?.value?.trim();
+      const projDesc = document.querySelector('.project-description')?.value?.trim();
+      const projTech = document.querySelector('.project-tech')?.value?.trim();
+      if (projTitle) {
+        projects.push({ title: projTitle, description: projDesc, tech: projTech });
+      }
+      
+      const experience = [];
+      const expTitle = document.querySelector('.exp-title')?.value?.trim();
+      const expCompany = document.querySelector('.exp-company')?.value?.trim();
+      const expDuration = document.querySelector('.exp-duration')?.value?.trim();
+      const expDesc = document.querySelector('.exp-description')?.value?.trim();
+      if (expTitle) {
+        experience.push({ 
+          title: expTitle, 
+          company: expCompany, 
+          duration: expDuration || '0',
+          description: expDesc 
+        });
+      }
+      
+      state.student = {
+        name,
+        email,
+        phone: document.getElementById('student-phone').value.trim(),
+        location: document.getElementById('student-location').value.trim(),
+        profileUrl: document.getElementById('student-profile-url').value.trim(),
+        degree: document.getElementById('student-degree').value.trim(),
+        institution: document.getElementById('student-institution').value.trim(),
+        gradYear: document.getElementById('student-grad-year').value.trim(),
+        gpa: document.getElementById('student-gpa').value.trim(),
+        skills: [...studentSkills],
+        projects,
+        experience
+      };
+      
+      // Add to students list if not exists
+      const existingIdx = state.students.findIndex(s => s.email === email);
+      if (existingIdx > -1) {
+        state.students[existingIdx] = state.student;
+      } else {
+        state.students.push(state.student);
+      }
+      
+      saveToStorage();
+      render();
+    }
+    
+    function clearStudentForm() {
+      document.querySelectorAll('#student-form-container input, #student-form-container textarea').forEach(el => {
+        el.value = '';
+      });
+      document.querySelectorAll('#student-form-container select').forEach(el => {
+        el.selectedIndex = 0;
+      });
+      studentSkills.length = 0;
+      renderStudentSkills();
+    }
+    
+    window.jobRequiredSkills = [];
+    window.jobPreferredSkills = [];
+    
+    function postJob() {
+      const company = document.getElementById('job-company').value.trim();
+      const title = document.getElementById('job-title').value.trim();
+      
+      if (!company || !title) {
+        alert('Please fill in company name and job title');
+        return;
+      }
+      
+      const job = {
+        company,
+        title,
+        location: document.getElementById('job-location').value || 'Not specified',
+        type: document.getElementById('job-type').value || 'Full-time',
+        experience: document.getElementById('job-experience').value || 'Mid',
+        salary: document.getElementById('job-salary').value.trim(),
+        requiredSkills: [...window.jobRequiredSkills],
+        preferredSkills: [...window.jobPreferredSkills],
+        description: document.getElementById('job-description').value.trim()
+      };
+      
+      state.jobs.push(job);
+      saveToStorage();
+      render();
+    }
+    
+    function clearJobForm() {
+      document.querySelectorAll('#tab-post input, #tab-post textarea').forEach(el => {
+        el.value = '';
+      });
+      document.querySelectorAll('#tab-post select').forEach(el => {
+        el.selectedIndex = 0;
+      });
+      window.jobRequiredSkills = [];
+      window.jobPreferredSkills = [];
+      renderJobSkills('required');
+      renderJobSkills('preferred');
+    }
+    
+    function renderJobSkills(type) {
+      renderTagInput(`job-${type}-skills`, type === 'required' ? window.jobRequiredSkills : window.jobPreferredSkills);
+    }
+    
+    window.deleteJob = function(idx) {
+      if (confirm('Are you sure you want to delete this job?')) {
+        state.jobs.splice(idx, 1);
+        saveToStorage();
+        render();
+      }
+    };
+    
+    // Start
+    init();
+  </script>
+</body>
+</html>
