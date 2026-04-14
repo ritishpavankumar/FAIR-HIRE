@@ -62,7 +62,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 72px;
+      height: 64px;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-light);
@@ -101,6 +101,32 @@
       color: white;
     }
     
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .nav-link {
+      padding: 10px 18px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .nav-link:hover { color: var(--text-primary); background: var(--border-light); }
+    
+    .nav-link.active {
+      background: var(--primary);
+      color: white;
+    }
+    
     .nav-cta {
       display: flex;
       gap: 8px;
@@ -128,7 +154,7 @@
     
     /* Hero Section */
     .hero {
-      padding: 140px 0 80px;
+      padding: 120px 0 60px;
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -876,8 +902,44 @@
       max-width: 300px;
     }
     
-    /* Responsive */
+    /* Mobile Nav */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid var(--border);
+      padding: 8px;
+      gap: 4px;
+      z-index: 100;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .mobile-nav-link {
+      flex: 1;
+      padding: 12px 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .mobile-nav-link.active {
+      background: var(--primary);
+      color: white;
+    }
+    
     @media (max-width: 768px) {
+      .mobile-nav { display: flex; }
+      body { padding-bottom: 70px; }
+    }
       .hero-title { font-size: 2.5rem; }
       .hero-subtitle { font-size: 1rem; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -888,6 +950,7 @@
       .result-card { flex-direction: column; align-items: flex-start; }
       .result-score { width: 100%; text-align: left; margin-top: 12px; }
       .nav-cta { display: none; }
+      .nav-links { display: none; }
       .section-tabs { width: 100%; }
       .section-tab { flex: 1; }
       .two-col-grid { grid-template-columns: 1fr; }
@@ -895,6 +958,14 @@
   </style>
 </head>
 <body>
+  <!-- Mobile Nav Toggle -->
+  <div class="mobile-nav" id="mobile-nav">
+    <button class="mobile-nav-link active" data-page="home" onclick="switchToPage('home')">Home</button>
+    <button class="mobile-nav-link" data-page="students" onclick="switchToPage('students')">Students</button>
+    <button class="mobile-nav-link" data-page="recruiters" onclick="switchToPage('recruiters')">Recruiters</button>
+    <button class="mobile-nav-link" data-page="about" onclick="switchToPage('about')">About</button>
+  </div>
+
   <!-- Navbar -->
   <nav class="navbar">
     <div class="container">
@@ -904,16 +975,21 @@
         </div>
         FairHire
       </div>
+      <div class="nav-links">
+        <button class="nav-link active" data-page="home" id="nav-home">Home</button>
+        <button class="nav-link" data-page="students" id="nav-students">Students</button>
+        <button class="nav-link" data-page="recruiters" id="nav-recruiters">Recruiters</button>
+        <button class="nav-link" data-page="about" id="nav-about">About FairHire</button>
+      </div>
       <div class="nav-cta">
         <button class="nav-btn" id="nav-student-btn">Find Jobs</button>
         <button class="nav-btn" id="nav-recruiter-btn">Find Talent</button>
       </div>
-      <div></div>
     </div>
   </nav>
 
   <!-- Hero Section -->
-  <section class="hero">
+  <section class="hero" id="hero-section">
     <div class="container">
       <div class="hero-badge">
         <span class="hero-badge-dot"></span>
@@ -940,7 +1016,69 @@
   </section>
 
   <!-- Main Content -->
-  <main class="main-content">
+  <!-- About Section -->
+  <section class="about-section" id="about-section" style="display: none;">
+    <div class="container">
+      <h2 class="content-title">About FairHire</h2>
+      <p class="content-subtitle">Smart talent matching for the modern workplace</p>
+      
+      <div class="two-col-grid">
+        <div class="card">
+          <h3 class="card-title">
+            <span class="card-icon">
+              <svg viewBox="0 0 24 24" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </span>
+            Our Mission
+          </h3>
+          <p style="color: var(--text-secondary); line-height: 1.7;">
+            FairHire aims to eliminate hiring bias by focusing purely on skills, qualifications, and fit. We believe the best candidate should rise to the top based on merit, not credentials or connections.
+          </p>
+        </div>
+        
+        <div class="card">
+          <h3 class="card-title">
+            <span class="card-icon">
+              <svg viewBox="0 0 24 24" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+            </span>
+            How It Works
+          </h3>
+          <p style="color: var(--text-secondary); line-height: 1.7;">
+            Our AI-powered matching algorithm evaluates candidates based on skills, projects, experience, and education to calculate a fair fit score. Recruiters see the best matches ranked by their actual qualifications.
+          </p>
+        </div>
+        
+        <div class="card">
+          <h3 class="card-title">
+            <span class="card-icon">
+              <svg viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </span>
+            Privacy First
+          </h3>
+          <p style="color: var(--text-secondary); line-height: 1.7;">
+            Your data stays yours. We don't share your information with third parties. All profile data is stored locally in your browser and can be deleted at any time.
+          </p>
+        </div>
+        
+        <div class="card">
+          <h3 class="card-title">
+            <span class="card-icon">
+              <svg viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            </span>
+            For Everyone
+          </h3>
+          <p style="color: var(--text-secondary); line-height: 1.7;">
+            Whether you're a student looking for your first job or a recruiter seeking top talent, FairHire provides a level playing field where skills speak louder than anything else.
+          </p>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 40px;">
+        <button class="btn btn-primary" onclick="switchToPage('students')">Get Started</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="main-content" id="main-content">
     <div class="container">
       <!-- Role Tabs -->
       <div class="section-tabs" id="section-tabs">
@@ -1312,6 +1450,7 @@
   <script>
     // ========== STATE ==========
     const state = {
+      page: 'home',
       role: 'student',
       currentTab: 'post',
       student: null,
@@ -1347,15 +1486,20 @@
     
     // ========== EVENT LISTENERS ==========
     function setupEventListeners() {
+      // Navigation links
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => switchToPage(link.dataset.page));
+      });
+      
       // Hero buttons
-      document.getElementById('hero-student-btn').addEventListener('click', () => switchToView('student'));
-      document.getElementById('hero-recruiter-btn').addEventListener('click', () => switchToView('recruiter'));
-      document.getElementById('nav-student-btn').addEventListener('click', () => switchToView('student'));
-      document.getElementById('nav-recruiter-btn').addEventListener('click', () => switchToView('recruiter'));
+      document.getElementById('hero-student-btn').addEventListener('click', () => switchToPage('students'));
+      document.getElementById('hero-recruiter-btn').addEventListener('click', () => switchToPage('recruiters'));
+      document.getElementById('nav-student-btn').addEventListener('click', () => switchToPage('students'));
+      document.getElementById('nav-recruiter-btn').addEventListener('click', () => switchToPage('recruiters'));
       
       // Section tabs
       document.querySelectorAll('.section-tab').forEach(tab => {
-        tab.addEventListener('click', () => switchToView(tab.dataset.view));
+        tab.addEventListener('click', () => switchToPage(tab.dataset.view));
       });
       
       // Recruiter tabs
@@ -1402,6 +1546,38 @@
       document.getElementById('post-job').addEventListener('click', postJob);
       document.getElementById('clear-job-form').addEventListener('click', clearJobForm);
       document.getElementById('select-job').addEventListener('change', e => renderCandidatesForJob(e.target.value));
+    }
+    
+    function switchToPage(page) {
+      state.page = page;
+      
+      // Update nav links
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.page === page));
+      document.querySelectorAll('.mobile-nav-link').forEach(l => l.classList.toggle('active', l.dataset.page === page));
+      
+      // Show/hide sections
+      document.getElementById('hero-section').style.display = page === 'home' ? 'block' : 'none';
+      document.getElementById('about-section').style.display = page === 'about' ? 'block' : 'none';
+      document.getElementById('main-content').style.display = (page === 'students' || page === 'recruiters') ? 'block' : 'none';
+      document.getElementById('section-tabs').style.display = (page === 'students' || page === 'recruiters') ? 'flex' : 'none';
+      
+      // Set role based on page
+      if (page === 'students') {
+        state.role = 'student';
+      } else if (page === 'recruiters') {
+        state.role = 'recruiter';
+      }
+      
+      // Update section tabs
+      document.querySelectorAll('.section-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.view === state.role);
+      });
+      
+      render();
+      
+      if (page !== 'home') {
+        window.scrollTo({ top: 350, behavior: 'smooth' });
+      }
     }
     
     function switchToView(view) {
